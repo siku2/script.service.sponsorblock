@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.service.sponsorblock" version="0.0.1" name="SponsorBlock" provider-name="siku2">
+    <requires>
+        <import addon="xbmc.python" version="2.26.0"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.six" version="1.13.0"/>
+        <import addon="plugin.video.youtube" version="6.7.0"/>
+    </requires>
+
+    <extension point="xbmc.service" library="resources/lib/service.py"/>
+
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Skip YouTube in-video sponsors</summary>
+        <description lang="en_GB">
+            SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
+            Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
+        </description>
+        <platform>all</platform>
+        <license>MIT</license>
+        <source>https://github.com/siku2/script.service.sponsorblock</source>
+        <assets>
+            <!--            TODO-->
+        </assets>
+        <!--        TODO SET TO TRUE-->
+        <reuselanguageinvoker>false</reuselanguageinvoker>
+    </extension>
+</addon>
