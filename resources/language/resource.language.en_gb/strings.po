@@ -17,3 +17,7 @@ msgstr ""
 msgctxt "#32002"
 msgid "Server Domain"
 msgstr ""
+
+msgctxt "#32003"
+msgid "User ID"
+msgstr ""

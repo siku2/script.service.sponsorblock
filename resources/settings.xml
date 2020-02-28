@@ -13,6 +13,15 @@
                         <heading>32002</heading>
                     </control>
                 </setting>
+                <setting id="user_id" type="" label="32003" help="">
+                    <level>3</level>
+                    <constraints>
+                        <allowempty>false</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32003</heading>
+                    </control>
+                </setting>
             </group>
         </category>
     </section>
