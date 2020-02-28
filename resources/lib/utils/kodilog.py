@@ -16,10 +16,26 @@ class KodiHandler(logging.Handler):
         xbmc.log(msg, level_to_kodi(record.levelno))
 
 
+def strip_prefix(s, prefix):  # type: (str, str) -> str
+    if s.startswith(prefix):
+        return s[len(prefix):]
+    return s
+
+
+_COMMON_PREFIX = "resources.lib."
+
+
+class KodiFormatter(logging.Formatter):
+    def format(self, record):  # type: (logging.LogRecord) -> str
+        record.name = strip_prefix(record.name, _COMMON_PREFIX)
+        record.addon_id = ADDON_ID
+        return super(KodiFormatter, self).format(record)
+
+
 def setup_logging():  # type: () -> None
     logger = logging.getLogger()
-    # TODO get level from kodi
+    # TODO find a way to get current level from kodi
     logger.setLevel(logging.DEBUG)
     handler = KodiHandler()
-    handler.setFormatter(logging.Formatter("[{}] %(name)s %(message)s".format(ADDON_ID)))
+    handler.setFormatter(KodiFormatter("[%(addon_id)s] %(name)s: %(message)s"))
     logger.addHandler(handler)

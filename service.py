@@ -4,7 +4,7 @@ from resources.lib.utils import kodilog
 
 def main():  # type: () -> None
     m = Monitor()
-    m.waitForAbort()
+    m.wait_for_abort()
 
 
 if __name__ == "__main__":

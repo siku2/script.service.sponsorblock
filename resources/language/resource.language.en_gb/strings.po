@@ -1,7 +1,8 @@
 # Kodi Media Center language file
-# Addon Name: Skin Widgets
+# Addon Name: SponsorBlock
 # Addon id: script.service.sponsorblock
-# Addon Provider: Martijn, phil65
+# Addon Provider: siku2
+
 msgid ""
 msgstr ""
 "MIME-Version: 1.0\n"
@@ -10,14 +11,41 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# number: 32007
+
+
+# SETTINGS
+
+#   general category
+
 msgctxt "#32001"
 msgid "General"
+msgstr ""
+
+msgctxt "#32003"
+msgid "User ID"
+msgstr ""
+
+msgctxt "#32006"
+msgid "Show dialog after ad skip"
+msgstr ""
+
+#   api category
+
+msgctxt "#32006"
+msgid "API"
 msgstr ""
 
 msgctxt "#32002"
 msgid "Server Domain"
 msgstr ""
 
-msgctxt "#32003"
-msgid "User ID"
+# NOTIFICATIONS
+
+msgctxt "#32004"
+msgid "Failed to report sponsor segment"
+msgstr ""
+
+msgctxt "#32005"
+msgid "Reported sponsor segment"
 msgstr ""

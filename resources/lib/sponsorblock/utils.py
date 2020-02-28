@@ -2,10 +2,10 @@ import random
 import string
 
 _USER_ID_ALPHABET = string.ascii_letters + string.digits
-_USER_ID_LEN = 26
+_USER_ID_LEN = 36
 
 
-def random_choices(population, amount):
+def random_choices(population, amount):  # type: (Sequence[T], int) -> Iterator[T]
     for _ in range(amount):
         yield random.choice(population)
 
