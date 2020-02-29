@@ -11,7 +11,7 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# number: 32007
+# last number: 32010
 
 
 # SETTINGS
@@ -32,13 +32,14 @@ msgstr ""
 
 #   api category
 
-msgctxt "#32006"
+msgctxt "#32007"
 msgid "API"
 msgstr ""
 
 msgctxt "#32002"
 msgid "Server Domain"
 msgstr ""
+
 
 # NOTIFICATIONS
 
@@ -48,4 +49,19 @@ msgstr ""
 
 msgctxt "#32005"
 msgid "Reported sponsor segment"
+msgstr ""
+
+
+# SPONSOR SKIPPED DIALOG
+
+msgctxt "#32008"
+msgid "Skipped sponsor segment"
+msgstr ""
+
+msgctxt "#32009"
+msgid "unskip"
+msgstr ""
+
+msgctxt "#32010"
+msgid "report"
 msgstr ""

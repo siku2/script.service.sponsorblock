@@ -1,4 +1,5 @@
 import logging
+import os.path
 
 import xbmcaddon
 import xbmcgui
@@ -10,6 +11,12 @@ ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo("id")
 ADDON_NAME = ADDON.getAddonInfo("name")
 ADDON_PATH = ADDON.getAddonInfo("path")
+
+RESOURCES_PATH = os.path.join(ADDON_PATH, "resources")
+SKINS_PATH = os.path.join(RESOURCES_PATH, "skins")
+
+DEFAULT_SKIN = "default"
+DEFAULT_SKIN_RESOLUTION = "1080i"
 
 _SETTING_TYPES_MAP = {
     str: (ADDON.getSetting, ADDON.setSetting),

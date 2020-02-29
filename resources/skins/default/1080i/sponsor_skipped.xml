@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-    <defaultcontrol always="true">1</defaultcontrol>
     <onload>Dialog.Close(fullscreeninfo,true)</onload>
     <onload>Dialog.Close(videoosd,true)</onload>
+
+    <defaultcontrol always="true">1</defaultcontrol>
 
     <controls>
         <control type="group">
@@ -16,63 +17,66 @@
             </animation>
 
             <control type="group">
-                <height>25%</height>
-                <width>25%</width>
                 <right>0</right>
-                <bottom>10%</bottom>
+                <bottom>30%</bottom>
+                <height>15%</height>
+                <width>20%</width>
 
                 <!-- Background -->
                 <control type="image">
-                    <top>0</top>
-                    <right>0</right>
-                    <width>100%</width>
                     <height>100%</height>
-                    <texture>black</texture>
+                    <width>100%</width>
+
+                    <texture colordiffuse="cc000010">white.png</texture>
                 </control>
 
-                <!-- Labels -->
-                <control type="group">
-                    <top>2%</top>
-                    <left>5%</left>
-                    <width>90%</width>
+                <!-- Header -->
+                <control type="textbox">
+                    <left>0</left>
+                    <top>0</top>
+                    <width>100%</width>
+                    <height>75%</height>
 
-                    <!-- Buttons -->
-                    <control type="grouplist">
-                        <orientation>horizontal</orientation>
-                        <height>56</height>
-                        <bottom>20</bottom>
-                        <left>0</left>
-                        <itemgap>10</itemgap>
-                        <width>100%</width>
-                        <control type="button" id="1">
-                            <label>Unskip</label>
-                            <height>56</height>
-                            <width min="50">auto</width>
-                            <font>font20_title</font>
-                            <textoffsetx>55</textoffsetx>
-                            <textcolor>ddffffff</textcolor>
-                            <focusedcolor>eeffffff</focusedcolor>
-                            <selectedcolor>ddffffff</selectedcolor>
-                            <shadowcolor>22000000</shadowcolor>
-                            <aligny>center</aligny>
-                            <align>center</align>
-                            <pulseonselect>no</pulseonselect>
-                        </control>
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <font>font12</font>
+                    <textcolor>ffffffff</textcolor>
+                    <shadowcolor>00000000</shadowcolor>
+                    <label>$ADDON[script.service.sponsorblock 32008]</label>
+                </control>
 
-                        <control type="button" id="2">
-                            <label>Report</label>
-                            <height>56</height>
-                            <width min="50">auto</width>
-                            <font>font20_title</font>
-                            <textoffsetx>15</textoffsetx>
-                            <textcolor>ddffffff</textcolor>
-                            <focusedcolor>eeffffff</focusedcolor>
-                            <selectedcolor>ddffffff</selectedcolor>
-                            <shadowcolor>22000000</shadowcolor>
-                            <aligny>center</aligny>
-                            <align>center</align>
-                            <pulseonselect>no</pulseonselect>
-                        </control>
+                <!-- Buttons -->
+                <control type="grouplist">
+                    <left>10</left>
+                    <right>10</right>
+                    <bottom>10</bottom>
+                    <height>60</height>
+
+                    <orientation>horizontal</orientation>
+
+                    <control type="button" id="1">
+                        <width min="200">auto</width>
+                        <width>auto</width>
+
+                        <align>center</align>
+                        <focusedcolor>eeffffff</focusedcolor>
+                        <font>font20_title</font>
+                        <label>$ADDON[script.service.sponsorblock 32009]</label>
+                        <selectedcolor>ddffffff</selectedcolor>
+                        <shadowcolor>22000000</shadowcolor>
+                        <textcolor>ddffffff</textcolor>
+                    </control>
+
+                    <control type="button" id="2">
+                        <width min="150">auto</width>
+
+                        <align>center</align>
+                        <focusedcolor>eeffffff</focusedcolor>
+                        <font>font20_title</font>
+                        <label>$ADDON[script.service.sponsorblock 32010]</label>
+                        <selectedcolor>ddffffff</selectedcolor>
+                        <shadowcolor>22000000</shadowcolor>
+                        <textcolor>ddffdddd</textcolor>
                     </control>
                 </control>
             </control>

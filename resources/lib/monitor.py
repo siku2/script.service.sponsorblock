@@ -26,11 +26,11 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
     last_start = -1
     for seg in segments:  # type: SponsorSegment
         if seg.end - seg.start <= 0.1:
-            logger.debug("%s: invalid start/end time", seg)
+            logger.error("%s: invalid start/end time", seg)
             return False
 
         if seg.start <= last_start:
-            logger.debug("%s: wrong order (starts before previous)", seg)
+            logger.error("%s: wrong order (starts before previous)", seg)
             return False
 
         last_start = seg.start
@@ -70,12 +70,6 @@ class Monitor(xbmc.Monitor):
             logger.exception("failed to get sponsor times")
             return
 
-        # segments = [
-        #     SponsorSegment(uuid=u'96b8915596117a85dfd18add0f27e87f62520dc56f29fd439cca26cb5a7325fd', start=1.988,
-        #                    end=9.61),
-        #     SponsorSegment(uuid=u'dfea2697b97a8f5179a7524000d3cd969f949a4439f742526b6e25509bf960c3', start=11.44,
-        #                    end=15.462)]
-
         logger.debug("got segments %s", segments)
         assert _sanity_check_segments(segments)
         self._listener.start(segments)
@@ -96,6 +90,16 @@ class Monitor(xbmc.Monitor):
             return
 
 
+MAX_UNDERSHOOT = .25
+"""Amount of tolerance in seconds for waking up early.
+
+If the listener wakes up and the difference to the target time is bigger than this value, 
+it goes back to sleep for the remaining time.
+"""
+MAX_OVERSHOOT = 1.5
+"""Max seconds allowed to move past the start of a sponsor segment before ignoring it."""
+
+
 class PlayerMonitor(xbmc.Player):
     def __init__(self, *args, **kwargs):
         self._api = kwargs.pop("api")  # type: SponsorBlockAPI
@@ -105,27 +109,50 @@ class PlayerMonitor(xbmc.Player):
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
         self._playback_speed = 1.
+        self.__seek_time = None  # type: Optional[float]
 
         self.__wakeup = threading.Condition()
         self.__wakeup_triggered = False
         self._thread = None  # Optional[threading.Thread]
         self._stop = False
 
+    def get_current_time(self):  # type:() -> float
+        logger.warning("seek time: %s  time: %s  getTime: %s", xbmc.getInfoLabel("Player.SeekTime"),
+                       xbmc.getInfoLabel("Player.Time"), self.getTime())
+
+        seek_time = self.__seek_time
+        if seek_time is None:
+            return self.getTime()
+
+        return seek_time
+
+    def __select_next_segment(self):  # type: () -> None
+        current_time = self.get_current_time()
+        logger.debug("searching for next segment after %g", current_time)
+        self._next_segment = next((seg for seg in self._segments if seg.start > current_time), None)
+
     def __t_handle_wakeup(self):
         if xbmc.getCondVisibility(VAR_PLAYER_PAUSED):
             # no next segment when paused
             self._next_segment = None
         else:
-            current_time = self.getTime()
-            self._next_segment = next((seg for seg in self._segments if seg.start > current_time), None)
+            self.__select_next_segment()
 
         logger.debug("next segment: %s", self._next_segment)
 
     def __t_skip_sponsor(self):
         seg = self._next_segment
-        self.seekTime(seg.end)
-        # wait for seek event to trigger
+        # let the seek event handle setting the next segment
         self._next_segment = None
+
+        overshoot = self.get_current_time() - seg.start
+        if overshoot > MAX_OVERSHOOT:
+            logger.warning("overshot segment %s by %s second(s), not skipping", seg, overshoot)
+            self.__select_next_segment()
+            return
+
+        logger.debug("segment start overshot by %s second(s)", overshoot)
+        self.seekTime(seg.end)
 
         if not addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
             return
@@ -135,6 +162,7 @@ class PlayerMonitor(xbmc.Player):
             self.seekTime(seg.start)
 
         def report():
+            logger.debug("reporting segment %s", seg)
             try:
                 self._api.vote_sponsor_segment(seg, upvote=False)
             except Exception:
@@ -145,32 +173,45 @@ class PlayerMonitor(xbmc.Player):
 
             unskip()
 
-        SponsorSkipped.display(unskip, report)
+        SponsorSkipped.display_async(unskip, report)
 
-    def __t_sleep(self):  # type: () -> bool
-        seg = self._next_segment
-        if seg is None:
-            wait_for = None
-        else:
-            wait_for = seg.start - self.getTime()
-            if wait_for <= 0:
+    def __sleep_until(self, target_time):  # type: (float) -> bool
+        logger.debug("waiting until %s (or until wakeup)", target_time)
+        while True:
+            wait_for = (target_time - self.get_current_time()) / self._playback_speed
+            if wait_for <= MAX_UNDERSHOOT:
                 return True
 
-            # adjust for playback speed
-            wait_for /= self._playback_speed
+            with self.__wakeup:
+                logger.debug("sleeping for %s second(s) (or until wakeup)", wait_for)
+                self.__wakeup.wait(wait_for)
 
+            if self.__wakeup_triggered:
+                return False
+
+    def __t_idle(self):  # type: () -> bool
+        if self.__wakeup_triggered:
+            logger.debug("entered idle while wakeup has been triggered")
+            return False
+
+        seg = self._next_segment
+        if seg is not None and self._playback_speed > 0:
+            return self.__sleep_until(seg.start)
+
+        logger.debug("sleeping until wakeup triggered")
         with self.__wakeup:
-            self.__wakeup_triggered = False
-            logger.debug("sleeping for %s second(s) (or until wakeup)", wait_for)
-            self.__wakeup.wait(wait_for)
-            return not self.__wakeup_triggered
+            self.__wakeup.wait()
+
+        return not self.__wakeup_triggered
 
     def __t_event_loop(self):
         self._playback_speed = float(xbmc.getInfoLabel(VAR_PLAYER_SPEED))
         self._stop = False
 
         while not self._stop:
-            should_cut = self.__t_sleep()
+            self.__seek_time = None
+            should_cut = self.__t_idle()
+            self.__wakeup_triggered = False
             logger.debug("woke up: should_cut=%s stop=%s", should_cut, self._stop)
 
             if self._stop:
@@ -181,7 +222,7 @@ class PlayerMonitor(xbmc.Player):
             else:
                 self.__t_handle_wakeup()
 
-    def _triger_wakeup(self):
+    def _trigger_wakeup(self):
         if not self._thread_running:
             return
 
@@ -211,7 +252,7 @@ class PlayerMonitor(xbmc.Player):
 
         logger.debug("stopping playback listener")
         self._stop = True
-        self._triger_wakeup()
+        self._trigger_wakeup()
 
         logger.debug("waiting for listener to join")
         self._thread.join()
@@ -219,17 +260,18 @@ class PlayerMonitor(xbmc.Player):
         logger.debug("listener stopped")
 
     def onPlayBackSeek(self, time, offset):  # type: (int, int) -> None
-        self._triger_wakeup()
+        self.__seek_time = time / 1000.
+        self._trigger_wakeup()
 
     def onPlayBackEnded(self):  # type: () -> None
         self.stop()
 
     def onPlayBackPaused(self):  # type: () -> None
-        self._triger_wakeup()
+        self._trigger_wakeup()
 
     def onPlayBackResumed(self):  # type: () -> None
-        self._triger_wakeup()
+        self._trigger_wakeup()
 
     def onPlayBackSpeedChanged(self, speed):  # type: (int) -> None
         self._playback_speed = float(speed)
-        self._triger_wakeup()
+        self._trigger_wakeup()

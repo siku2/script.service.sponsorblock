@@ -7,7 +7,7 @@ ADDON_ID = xbmcaddon.Addon().getAddonInfo("id")
 
 
 def level_to_kodi(level):  # type: (int) -> int
-    return level // 10
+    return (level - logging.DEBUG) // 10
 
 
 class KodiHandler(logging.Handler):
