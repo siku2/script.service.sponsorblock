@@ -12,14 +12,14 @@
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Skip YouTube in-video sponsors</summary>
         <description lang="en_GB">
-            SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
-            Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
+SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
+Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
         </description>
         <platform>all</platform>
         <license>MIT</license>
         <source>https://github.com/siku2/script.service.sponsorblock</source>
         <assets>
-            <!--TODO-->
+            <icon>resources/icon.png</icon>
         </assets>
     </extension>
 </addon>

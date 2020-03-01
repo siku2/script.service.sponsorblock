@@ -20,7 +20,6 @@ echo "creating release version $ADDON_VERSION for addon $ADDON_ID"
 
 function create_tempdir() {
   local work_dir
-
   work_dir=$(mktemp --directory)
   if [[ ! "$work_dir" || ! -d "$work_dir" ]]; then
     exit_with_error "could not create temp dir"
@@ -46,9 +45,9 @@ cp -rt "$dir" addon.xml ./*.py resources
 
 echo "zipping addon"
 
-zip_name="$ADDON_ID-$ADDON_VERSION.zip"
+ZIP_NAME="$ADDON_ID-$ADDON_VERSION.zip"
 pushd "$WORK_DIR" >/dev/null
-zip -qr "$zip_name" "$ADDON_ID"
+zip -qr "$ZIP_NAME" "$ADDON_ID"
 popd >/dev/null
 
-mv "$WORK_DIR/$zip_name" ./
+mv "$WORK_DIR/$ZIP_NAME" ./

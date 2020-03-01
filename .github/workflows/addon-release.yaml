@@ -1,0 +1,41 @@
+name: Addon release
+
+on:
+  push:
+    tags:
+    - "v*"
+
+jobs:
+  release:
+    name: Create addon release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Build addon
+      id: build_addon
+      run: |
+        source tools/create-release.sh
+        echo "::set-output name=name::${ZIP_NAME}"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.build_addon.outputs.name }}
+        asset_name: ${{ steps.build_addon.outputs.name }}
+        asset_content_type: application/zip

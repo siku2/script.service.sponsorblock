@@ -4,11 +4,11 @@ on: [push]
 
 jobs:
   kodi-addon-checker:
-    runs-on: ubuntu-latest
     name: Kodi addon checker
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Kodi addon checker validation
       id: kodi-addon-checker
