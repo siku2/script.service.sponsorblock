@@ -10,7 +10,7 @@
     <extension point="xbmc.service" library="service.py"/>
 
     <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Skip YouTube in-video sponsors</summary>
+        <summary lang="en_GB">Skip YouTube in-video sponsors (Port)</summary>
         <description lang="en_GB">
 SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
 Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
