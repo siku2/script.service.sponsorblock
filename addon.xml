@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.0.1" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.0.2" name="SponsorBlock" provider-name="siku2">
     <requires>
-        <import addon="xbmc.python" version="2.26.0"/>
-        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="xbmc.python" version="2.20.0"/>
+        <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
         <import addon="plugin.video.youtube" version="6.7.0"/>
     </requires>
@@ -12,14 +12,22 @@
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Skip YouTube in-video sponsors</summary>
         <description lang="en_GB">
+SponsorBlock browser extension ported to Kodi's YouTube plugin.
+
 SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
 Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
         </description>
+		<disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
+        <news>
+- Make it clear that this is an unofficial port.
+- Add fanart
+        </news>
         <platform>all</platform>
         <license>MIT</license>
         <source>https://github.com/siku2/script.service.sponsorblock</source>
         <assets>
-            <icon>resources/icon.png</icon>
+            <icon>resources/images/icon.png</icon>
+            <fanart>resources/images/fanart.jpg</fanart>
         </assets>
     </extension>
 </addon>
