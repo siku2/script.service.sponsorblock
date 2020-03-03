@@ -50,16 +50,20 @@ def get_sponsor_segments(api, video_id):  # type: (SponsorBlockAPI, str) -> Opti
     return segments
 
 
+def get_user_id():
+    user_id = addon.get_config(CONF_USER_ID, str)
+    if not user_id:
+        user_id = new_user_id()
+        logger.info("generated new user id: %s", user_id)
+        addon.set_config(CONF_USER_ID, user_id)
+
+    return user_id
+
+
 class Monitor(xbmc.Monitor):
     def __init__(self):
-        user_id = addon.get_config(CONF_USER_ID, str)
-        if not user_id:
-            user_id = new_user_id()
-            addon.set_config(CONF_USER_ID, user_id)
-
-        logger.debug("using user id: %s", user_id)
         self._api = SponsorBlockAPI(
-            user_id=user_id,
+            user_id=get_user_id(),
             api_server=addon.get_config(CONF_API_SERVER, str),
         )
 
@@ -71,6 +75,12 @@ class Monitor(xbmc.Monitor):
     def wait_for_abort(self):
         self.waitForAbort()
         self.stop()
+
+    def onSettingsChanged(self):  # type: () -> None
+        logger.info("settings changed, updating")
+        api = self._api
+        api.set_user_id(get_user_id())
+        api.set_api_server(addon.get_config(CONF_API_SERVER, str))
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
         if sender != youtube_api.ADDON_ID:
@@ -179,7 +189,11 @@ class PlayerMonitor(xbmc.Player):
 
         if addon.get_config(CONF_SKIP_COUNT_TRACKING, bool):
             logger.debug("reporting sponsor skipped")
-            self._api.viewed_sponsor_segment(seg)
+            try:
+                self._api.viewed_sponsor_segment(seg)
+            except Exception:
+                logger.exception("failed to report sponsor skipped")
+                # no need for a notification, the user doesn't need to know about this
 
     def __sleep_until(self, target_time):  # type: (float) -> bool
         logger.debug("waiting until %s (or until wakeup)", target_time)

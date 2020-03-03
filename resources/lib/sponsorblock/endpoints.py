@@ -5,7 +5,7 @@ _API_URL = _BASE_URL + "/api"
 
 GET_VIDEO_SPONSOR_TIMES = _API_URL + "/getVideoSponsorTimes"
 POST_VIDEO_SPONSOR_TIMES = _API_URL + "/postVideoSponsorTimes"
-VOTE_ON_SPONSOR_TIME = _API_URL = "/voteOnSponsorTime"
+VOTE_ON_SPONSOR_TIME = _API_URL + "/voteOnSponsorTime"
 VIEWED_VIDEO_SPONSOR_TIME = _API_URL + "/viewedVideoSponsorTime"
 
 # User
