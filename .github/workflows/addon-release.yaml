@@ -19,6 +19,13 @@ jobs:
         source tools/create-release.sh
         echo "::set-output name=name::${ZIP_NAME}"
 
+    - name: Reading news
+      id: read_news
+      uses: mavrosxristoforos/get-xml-info@1.0
+      with:
+        xml-file: addons.xml
+        xpath: //news
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -27,7 +34,8 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        draft: false
+        body: ${{ steps.read_news.outputs.info }}
+        draft: true
         prerelease: false
 
     - name: Upload Release Asset
