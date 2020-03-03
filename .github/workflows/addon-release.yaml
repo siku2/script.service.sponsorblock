@@ -47,10 +47,3 @@ jobs:
         asset_path: ${{ steps.build_addon.outputs.name }}
         asset_name: ${{ steps.build_addon.outputs.name }}
         asset_content_type: application/zip
-
-    - name: Trigger repository update
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-        repository: siku2/kodi-repository
-        event-type: trigger-update

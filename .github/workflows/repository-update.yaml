@@ -1,0 +1,17 @@
+name: Repository update
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Trigger repository update
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger repository update
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        repository: siku2/kodi-repository
+        event-type: trigger-update
