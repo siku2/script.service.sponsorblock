@@ -8,6 +8,12 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
+
+                <setting id="skip_count_tracking" type="boolean" label="32011" help="">
+                    <level>2</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
             </group>
         </category>
 

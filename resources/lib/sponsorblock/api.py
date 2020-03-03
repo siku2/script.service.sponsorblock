@@ -1,7 +1,7 @@
 import requests
 from six.moves import zip
 
-from .endpoints import DEFAULT_SERVER, GET_VIDEO_SPONSOR_TIMES, VOTE_ON_SPONSOR_TIME
+from .endpoints import DEFAULT_SERVER, GET_VIDEO_SPONSOR_TIMES, VOTE_ON_SPONSOR_TIME, VIEWED_VIDEO_SPONSOR_TIME
 from .errors import error_from_response
 from .models import SponsorSegment
 from .utils import new_user_id
@@ -12,6 +12,13 @@ _USER_AGENT = "kodi-sponsorblock/{version} (https://github.com/siku2/script.serv
 def get_user_agent():  # type: () -> str
     from . import __version__
     return _USER_AGENT.format(version=__version__)
+
+
+def get_segment_uuid(segment):  # type: (Union[str, SponsorSegment])
+    if isinstance(segment, SponsorSegment):
+        return segment.uuid
+
+    return segment
 
 
 class SponsorBlockAPI:
@@ -45,11 +52,13 @@ class SponsorBlockAPI:
                 for uuid, (start, end) in zip(uuids, sponsor_times)]
 
     def vote_sponsor_segment(self, segment, upvote=False):
-        if isinstance(segment, SponsorSegment):
-            segment = segment.uuid
-
         self._request("POST", VOTE_ON_SPONSOR_TIME, {
-            "UUID": segment,
+            "UUID": get_segment_uuid(segment),
             "userID": self._user_id,
             "type": int(upvote)
+        })
+
+    def viewed_sponsor_segment(self, segment):
+        self._request("POST", VIEWED_VIDEO_SPONSOR_TIME, {
+            "UUID": get_segment_uuid(segment),
         })

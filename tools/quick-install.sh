@@ -62,7 +62,7 @@ function start_kodi() {
 
 function tail_log() {
   echo "showing kodi log"
-  tail --follow=name --retry --lines 200 "$KODI_PATH/temp/kodi.log" | grep --color "$ADDON_ID"
+  tail --follow=name --retry --lines 200 "$KODI_PATH/temp/kodi.log" | grep --color -E "$ADDON_ID|$"
 }
 
 function main() {

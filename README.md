@@ -10,15 +10,6 @@ For a detailed explanation of how SponsorSkip works please visit the [offical we
 
 ## Installation
 
-### IMPORTANT NOTE
-
-This addon depends on the YouTube plugin, specifically [version 6.7.0](https://github.com/jdf76/plugin.video.youtube/releases/tag/6.7.0-dev) which is currently in alpha.
-This means that it isn't yet part of the official repository.
-
-If you still wish to use this addon, follow [this guide](https://github.com/jdf76/plugin.video.youtube/wiki/Installation) to install the development version of the YouTube plugin.
-
-<br/>
-
 The addon is available in [siku2's repository](https://siku2.io/kodi-repository).
 
 1. Install [siku2's repository](https://siku2.io/kodi-repository/install)
@@ -32,6 +23,11 @@ Congratulations, you now have SponsorBlock installed.
 
 Different settings are shown based on your [Settings Level](https://kodi.wiki/view/Settings#Settings_Level).
 For instance, you can only change your user id if your settings level is "Advanced" or above.
+
+### Importing your account
+
+If you're already using SponsorBlock you might want to use your existing account (user id).
+To do this refer to the [Import an existing account](https://github.com/siku2/script.service.sponsorblock/wiki/Import-an-existing-account) wiki page.
 
 
 ## Issues and Suggestions

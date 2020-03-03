@@ -11,7 +11,7 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# last number: 32010
+# next number: 32012
 
 
 # SETTINGS
@@ -22,18 +22,22 @@ msgctxt "#32001"
 msgid "General"
 msgstr ""
 
-msgctxt "#32003"
-msgid "User ID"
-msgstr ""
-
 msgctxt "#32006"
 msgid "Show dialog after ad skip"
+msgstr ""
+
+msgctxt "#32011"
+msgid "Enable Sponsor Skip Count Tracking"
 msgstr ""
 
 #   api category
 
 msgctxt "#32007"
 msgid "API"
+msgstr ""
+
+msgctxt "#32003"
+msgid "User ID"
 msgstr ""
 
 msgctxt "#32002"

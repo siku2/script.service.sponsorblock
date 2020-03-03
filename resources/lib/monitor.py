@@ -1,25 +1,18 @@
-import json
+import contextlib
 import logging
 import threading
 
 import xbmc
-from six.moves.urllib.parse import unquote as url_unquote
 
-from .const import CONF_API_SERVER, CONF_SHOW_SKIPPED_DIALOG, CONF_USER_ID, VAR_PLAYER_PAUSED, VAR_PLAYER_SPEED
+from . import youtube_api
+from .const import CONF_API_SERVER, CONF_SHOW_SKIPPED_DIALOG, CONF_SKIP_COUNT_TRACKING, CONF_USER_ID, VAR_PLAYER_PAUSED, \
+    VAR_PLAYER_SPEED
 from .gui.sponsor_skipped import SponsorSkipped
 from .sponsorblock import NotFound, SponsorBlockAPI, SponsorSegment
 from .sponsorblock.utils import new_user_id
 from .utils import addon
 
 logger = logging.getLogger(__name__)
-
-YOUTUBE_ADDON_ID = "plugin.video.youtube"
-PLAYBACK_STARTED = "Other.PlaybackStarted"
-
-
-def _load_youtube_notification_payload(data):  # type: (str) -> Any
-    args = json.loads(data)
-    return json.loads(url_unquote(args[0]))
 
 
 def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> bool
@@ -38,6 +31,25 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
     return True
 
 
+def get_sponsor_segments(api, video_id):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
+    try:
+        segments = api.get_video_sponsor_times(video_id)
+    except NotFound:
+        logger.info("video %s has no sponsor segments", video_id)
+        return None
+    except Exception:
+        logger.exception("failed to get sponsor times")
+        return None
+
+    if not segments:
+        logger.warning("received empty list of sponsor segments for video %s", video_id)
+        return None
+
+    logger.debug("got segments %s", segments)
+    assert _sanity_check_segments(segments)
+    return segments
+
+
 class Monitor(xbmc.Monitor):
     def __init__(self):
         user_id = addon.get_config(CONF_USER_ID, str)
@@ -51,43 +63,26 @@ class Monitor(xbmc.Monitor):
             api_server=addon.get_config(CONF_API_SERVER, str),
         )
 
-        self._listener = PlayerMonitor(api=self._api)
+        self._player_listener = PlayerMonitor(api=self._api)
 
     def stop(self):
-        self._listener.stop()
+        self._player_listener.stop()
 
     def wait_for_abort(self):
         self.waitForAbort()
         self.stop()
 
-    def on_playback_started(self, video_id):  # type: (str) -> None
-        try:
-            segments = self._api.get_video_sponsor_times(video_id)
-        except NotFound:
-            logger.info("video %s has no sponsor segments", video_id)
-            return
-        except Exception:
-            logger.exception("failed to get sponsor times")
-            return
-
-        logger.debug("got segments %s", segments)
-        assert _sanity_check_segments(segments)
-        self._listener.start(segments)
-
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
-        if sender != YOUTUBE_ADDON_ID:
+        if sender != youtube_api.ADDON_ID:
             return
 
         try:
-            data = _load_youtube_notification_payload(data)
+            data = youtube_api.parse_notification_payload(data)
         except Exception:
             logger.exception("failed to parse notification payload (%s): %r", method, data)
             return
 
         logger.debug("notification from YouTube addon: %r %s", method, data)
-        if method == PLAYBACK_STARTED:
-            self.on_playback_started(data["video_id"])
-            return
 
 
 MAX_UNDERSHOOT = .25
@@ -116,10 +111,17 @@ class PlayerMonitor(xbmc.Player):
         self._thread = None  # Optional[threading.Thread]
         self._stop = False
 
-    def get_current_time(self):  # type:() -> float
-        logger.warning("seek time: %s  time: %s  getTime: %s", xbmc.getInfoLabel("Player.SeekTime"),
-                       xbmc.getInfoLabel("Player.Time"), self.getTime())
+    def _get_current_time(self):  # type:() -> float
+        """Get the current time of the current item.
 
+        This method is the same as `Player.getTime` unless it is called just after seeking.
+        For a period after seeking `Player.getTime` still reports the time prior to seeking.
+        This is problematic for us because we rely on the current time being correct.
+        This function solves this by returning the seek time instead, until the seek time is cleared again.
+
+        Returns:
+            Current time in seconds.
+        """
         seek_time = self.__seek_time
         if seek_time is None:
             return self.getTime()
@@ -127,7 +129,7 @@ class PlayerMonitor(xbmc.Player):
         return seek_time
 
     def __select_next_segment(self):  # type: () -> None
-        current_time = self.get_current_time()
+        current_time = self._get_current_time()
         logger.debug("searching for next segment after %g", current_time)
         self._next_segment = next((seg for seg in self._segments if seg.start > current_time), None)
 
@@ -145,7 +147,7 @@ class PlayerMonitor(xbmc.Player):
         # let the seek event handle setting the next segment
         self._next_segment = None
 
-        overshoot = self.get_current_time() - seg.start
+        overshoot = self._get_current_time() - seg.start
         if overshoot > MAX_OVERSHOOT:
             logger.warning("overshot segment %s by %s second(s), not skipping", seg, overshoot)
             self.__select_next_segment()
@@ -175,10 +177,14 @@ class PlayerMonitor(xbmc.Player):
 
         SponsorSkipped.display_async(unskip, report)
 
+        if addon.get_config(CONF_SKIP_COUNT_TRACKING, bool):
+            logger.debug("reporting sponsor skipped")
+            self._api.viewed_sponsor_segment(seg)
+
     def __sleep_until(self, target_time):  # type: (float) -> bool
         logger.debug("waiting until %s (or until wakeup)", target_time)
         while True:
-            wait_for = (target_time - self.get_current_time()) / self._playback_speed
+            wait_for = (target_time - self._get_current_time()) / self._playback_speed
             if wait_for <= MAX_UNDERSHOOT:
                 return True
 
@@ -204,13 +210,25 @@ class PlayerMonitor(xbmc.Player):
 
         return not self.__wakeup_triggered
 
+    @contextlib.contextmanager
+    def __cm_reset_seek_time(self):
+        prev_seek = self.__seek_time
+        try:
+            yield
+        finally:
+            if self.__seek_time == prev_seek:
+                self.__seek_time = None
+
     def __t_event_loop(self):
         self._playback_speed = float(xbmc.getInfoLabel(VAR_PLAYER_SPEED))
         self._stop = False
+        self.__seek_time = None
 
         while not self._stop:
-            self.__seek_time = None
-            should_cut = self.__t_idle()
+            # reset seek time if it didn't change while idling.
+            with self.__cm_reset_seek_time():
+                should_cut = self.__t_idle()
+
             self.__wakeup_triggered = False
             logger.debug("woke up: should_cut=%s stop=%s", should_cut, self._stop)
 
@@ -222,6 +240,11 @@ class PlayerMonitor(xbmc.Player):
             else:
                 self.__t_handle_wakeup()
 
+    @property
+    def _thread_running(self):  # type: () -> bool
+        t = self._thread
+        return t is not None and t.is_alive()
+
     def _trigger_wakeup(self):
         if not self._thread_running:
             return
@@ -230,11 +253,6 @@ class PlayerMonitor(xbmc.Player):
         with self.__wakeup:
             self.__wakeup_triggered = True
             self.__wakeup.notify_all()
-
-    @property
-    def _thread_running(self):  # type: () -> bool
-        t = self._thread
-        return t is not None and t.is_alive()
 
     def start(self, segments):  # type: (List[SponsorSegment]) -> None
         assert not self._thread_running
@@ -262,6 +280,18 @@ class PlayerMonitor(xbmc.Player):
     def onPlayBackSeek(self, time, offset):  # type: (int, int) -> None
         self.__seek_time = time / 1000.
         self._trigger_wakeup()
+
+    def onPlayBackStarted(self):  # type: () -> None
+        file_path = xbmc.getInfoLabel("Player.FilenameAndPath")
+        video_id = youtube_api.video_id_from_path(file_path)
+        if not video_id:
+            return
+
+        segments = get_sponsor_segments(self._api, video_id)
+        if not segments:
+            return
+
+        self.start(segments)
 
     def onPlayBackEnded(self):  # type: () -> None
         self.stop()
