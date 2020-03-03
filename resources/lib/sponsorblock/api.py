@@ -18,7 +18,7 @@ def get_user_agent():  # type: () -> str
     return _USER_AGENT.format(version=__version__)
 
 
-def get_segment_uuid(segment):  # type: (Union[str, SponsorSegment])
+def get_segment_uuid(segment):  # type: (Union[str, SponsorSegment]) -> str
     if isinstance(segment, SponsorSegment):
         return segment.uuid
 
@@ -47,7 +47,7 @@ class SponsorBlockAPI:
 
         self._user_id = user_id
 
-    def _request(self, method, url, params):
+    def _request(self, method, url, params, is_json=True):
         req_cm = self._session.request(
             method, url.format(SERVER=self._api_server),
             params,
@@ -57,7 +57,10 @@ class SponsorBlockAPI:
             if resp.status_code != 200:
                 raise error_from_response(resp)
 
-            return resp.json()
+            if is_json:
+                return resp.json()
+            else:
+                return None
 
     def get_video_sponsor_times(self, video_id):  # type: (str) -> List[SponsorSegment]
         data = self._request("GET", GET_VIDEO_SPONSOR_TIMES, {"videoID": video_id})
@@ -73,9 +76,9 @@ class SponsorBlockAPI:
             "UUID": get_segment_uuid(segment),
             "userID": self._user_id,
             "type": int(upvote)
-        })
+        }, is_json=False)
 
     def viewed_sponsor_segment(self, segment):  # type: (Union[str, SponsorSegment]) -> None
         self._request("POST", VIEWED_VIDEO_SPONSOR_TIME, {
             "UUID": get_segment_uuid(segment),
-        })
+        }, is_json=False)

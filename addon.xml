@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.1.0" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.1.1" name="SponsorBlock" provider-name="siku2">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests" version="2.15.1"/>
@@ -19,6 +19,11 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
         </description>
 		<disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
+[0.1.1]
+- Fix Kodi's player reporting an inaccurate time after seeking.
+- Fix "Sponsor Skip Count Tracking" reporting
+
+[0.1.0]
 - Drop dependency on YouTube 6.7.0
 - Add option for "Sponsor Skip Count Tracking"
         </news>

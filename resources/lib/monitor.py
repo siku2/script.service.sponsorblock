@@ -1,6 +1,7 @@
-import contextlib
+import logging
 import logging
 import threading
+import time
 
 import xbmc
 
@@ -104,6 +105,13 @@ it goes back to sleep for the remaining time.
 MAX_OVERSHOOT = 1.5
 """Max seconds allowed to move past the start of a sponsor segment before ignoring it."""
 
+MAX_SEEK_AGE = 3
+"""Amount of time in seconds after a seek before the seek time expires.
+
+In other words, this is the time after which the Kodi player should start reporting accurate values for 
+`Player.getTime()` again.
+"""
+
 
 class PlayerMonitor(xbmc.Player):
     def __init__(self, *args, **kwargs):
@@ -114,12 +122,34 @@ class PlayerMonitor(xbmc.Player):
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
         self._playback_speed = 1.
-        self.__seek_time = None  # type: Optional[float]
+        self.__seek = None  # type: Optional[Tuple[float, float]]
 
         self.__wakeup = threading.Condition()
         self.__wakeup_triggered = False
         self._thread = None  # Optional[threading.Thread]
         self._stop = False
+
+    @property
+    def _seek_time(self):  # type: () -> Optional[float]
+        try:
+            seek_time, timestamp = self.__seek
+        except TypeError:
+            return None
+
+        age = time.time() - timestamp
+        if age > MAX_SEEK_AGE:
+            logger.debug("seek time expired")
+            self.__seek = None
+            return None
+
+        return seek_time + age * self._playback_speed
+
+    @_seek_time.setter
+    def _seek_time(self, value):  # type: (float) -> None
+        if value is None:
+            self.__seek = None
+        else:
+            self.__seek = (value, time.time())
 
     def _get_current_time(self):  # type:() -> float
         """Get the current time of the current item.
@@ -132,7 +162,7 @@ class PlayerMonitor(xbmc.Player):
         Returns:
             Current time in seconds.
         """
-        seek_time = self.__seek_time
+        seek_time = self._seek_time
         if seek_time is None:
             return self.getTime()
 
@@ -224,25 +254,15 @@ class PlayerMonitor(xbmc.Player):
 
         return not self.__wakeup_triggered
 
-    @contextlib.contextmanager
-    def __cm_reset_seek_time(self):
-        prev_seek = self.__seek_time
-        try:
-            yield
-        finally:
-            if self.__seek_time == prev_seek:
-                self.__seek_time = None
-
     def __t_event_loop(self):
         self._playback_speed = float(xbmc.getInfoLabel(VAR_PLAYER_SPEED))
+
         self._stop = False
-        self.__seek_time = None
+        self._seek_time = None
+        self.__wakeup_triggered = False
 
         while not self._stop:
-            # reset seek time if it didn't change while idling.
-            with self.__cm_reset_seek_time():
-                should_cut = self.__t_idle()
-
+            should_cut = self.__t_idle()
             self.__wakeup_triggered = False
             logger.debug("woke up: should_cut=%s stop=%s", should_cut, self._stop)
 
@@ -291,8 +311,8 @@ class PlayerMonitor(xbmc.Player):
 
         logger.debug("listener stopped")
 
-    def onPlayBackSeek(self, time, offset):  # type: (int, int) -> None
-        self.__seek_time = time / 1000.
+    def onPlayBackSeek(self, target, offset):  # type: (int, int) -> None
+        self._seek_time = target / 1000.
         self._trigger_wakeup()
 
     def onPlayBackStarted(self):  # type: () -> None
@@ -311,11 +331,14 @@ class PlayerMonitor(xbmc.Player):
         self.stop()
 
     def onPlayBackPaused(self):  # type: () -> None
+        self._seek_time = None
         self._trigger_wakeup()
 
     def onPlayBackResumed(self):  # type: () -> None
+        self._seek_time = None
         self._trigger_wakeup()
 
     def onPlayBackSpeedChanged(self, speed):  # type: (int) -> None
+        self._seek_time = None
         self._playback_speed = float(speed)
         self._trigger_wakeup()
