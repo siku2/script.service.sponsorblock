@@ -15,7 +15,7 @@ ADDON_PATH = ADDON.getAddonInfo("path")
 RESOURCES_PATH = os.path.join(ADDON_PATH, "resources")
 SKINS_PATH = os.path.join(RESOURCES_PATH, "skins")
 
-DEFAULT_SKIN = "default"
+DEFAULT_SKIN = "Default"
 DEFAULT_SKIN_RESOLUTION = "1080i"
 
 _SETTING_TYPES_MAP = {
