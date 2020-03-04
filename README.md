@@ -37,11 +37,6 @@ Bonus points if you [provide the debug logs](https://kodi.wiki/view/Log_file/Eas
 
 ### Known Issues
 
-#### Seeking to just before the start of a sponsor segment doesn't skip it
-
-This is hard to fix because Kodi doesn't accurately report the current time after seeking.
-For a short period after seeking Kodi still reports the previous time.
-
 #### Ad skip dialog is ugly
 
 Yeah, it definitely needs some work...
