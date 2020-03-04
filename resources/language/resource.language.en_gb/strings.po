@@ -11,7 +11,7 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# next number: 32012
+# next number: 32013
 
 
 # SETTINGS
@@ -30,29 +30,33 @@ msgctxt "#32011"
 msgid "Enable Sponsor Skip Count Tracking"
 msgstr ""
 
+msgctxt "#32012"
+msgid "Auto Upvote"
+msgstr ""
+
 #   api category
 
 msgctxt "#32007"
 msgid "API"
 msgstr ""
 
-msgctxt "#32003"
-msgid "User ID"
-msgstr ""
-
 msgctxt "#32002"
 msgid "Server Domain"
+msgstr ""
+
+msgctxt "#32003"
+msgid "User ID"
 msgstr ""
 
 
 # NOTIFICATIONS
 
 msgctxt "#32004"
-msgid "Failed to report sponsor segment"
+msgid "Failed to submit vote"
 msgstr ""
 
 msgctxt "#32005"
-msgid "Reported sponsor segment"
+msgid "Submitted vote"
 msgstr ""
 
 

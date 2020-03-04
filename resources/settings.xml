@@ -9,6 +9,12 @@
                     <control type="toggle"/>
                 </setting>
 
+                <setting id="auto_upvote" type="boolean" label="32012" help="">
+                    <level>1</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+
                 <setting id="skip_count_tracking" type="boolean" label="32011" help="">
                     <level>2</level>
                     <default>true</default>

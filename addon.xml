@@ -20,6 +20,7 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
 		<disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
 [0.1.1]
+- Added option to automatically upvote a sponsor segment
 - Fix Kodi's player reporting an inaccurate time after seeking.
 - Fix "Sponsor Skip Count Tracking" reporting
 

@@ -17,16 +17,19 @@ class SponsorSkipped(xbmcgui.WindowXMLDialog):
     def __init__(self, *args, **kwargs):
         self._on_unskip = kwargs.pop("on_unskip")  # type: Callable[[], None]
         self._on_report = kwargs.pop("on_report")  # type: Callable[[], None]
+        self._on_expire = kwargs.pop("on_expire")  # type: Callable[[], None]
+
         self.__closed = False
         self.__close_in = AUTO_CLOSE_TIME
 
         super(SponsorSkipped, self).__init__(*args, **kwargs)
 
     @classmethod
-    def display(cls, on_unskip, on_report):
+    def display(cls, on_unskip, on_report, on_expire):
         inst = cls("sponsor_skipped.xml", addon.ADDON_PATH, addon.DEFAULT_SKIN, addon.DEFAULT_SKIN_RESOLUTION,
                    on_unskip=on_unskip,
-                   on_report=on_report)
+                   on_report=on_report,
+                   on_expire=on_expire)
         inst.doModal()
 
     @classmethod
@@ -47,6 +50,7 @@ class SponsorSkipped(xbmcgui.WindowXMLDialog):
 
         logger.debug("automatically closing window")
         self.close()
+        self._on_expire()
 
     def onInit(self):  # type: () -> None
         self.__closer()
