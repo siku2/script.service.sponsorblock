@@ -48,6 +48,8 @@ def get_playback_json():  # type: () -> dict
 SCHEME_PLUGIN = "plugin"
 PATH_PLAY = "/play"
 
+DOMAIN_GOOGLEVIDEO = "googlevideo.com"
+
 
 def video_id_from_path(path):  # type: (str) -> Option[str]
     """
@@ -70,6 +72,11 @@ def video_id_from_path(path):  # type: (str) -> Option[str]
                 path_url.netloc == ADDON_ID and \
                 path_url.path.startswith(PATH_PLAY)
     if not valid_url:
+        if path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO):
+            _logger.warning("playing a video from 'googlevideo.com'. "
+                            "This might be a YouTube video being played directly but "
+                            "there's no way to get the original video id from it")
+
         return None
 
     query = urlparse.parse_qs(path_url.query)

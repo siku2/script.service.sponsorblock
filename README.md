@@ -3,21 +3,19 @@
 This is an **unofficial** port of the [SponsorBlock](https://sponsor.ajay.app/) browser extension.
 It works as an extension to the [YouTube Plugin](https://github.com/jdf76/plugin.video.youtube).
 
-Once installed, the addon will automatically skip sponsor segments in all YouTube videos you watch.
+Once installed, the add-on will automatically skip sponsor segments in all YouTube videos you watch.
 
 For a detailed explanation of how SponsorSkip works please visit the [offical website](https://sponsor.ajay.app/).
 
-
 ## Installation
 
-The addon is available in [siku2's repository](https://siku2.io/kodi-repository).
+The add-on is available in [siku2's repository](https://siku2.io/kodi-repository).
 
 1. Install [siku2's repository](https://siku2.io/kodi-repository/install)
 2. Go to "Add-ons" > "Install from repository" > "siku2's Repository"
 3. Install "SponsorBlock" under "Services"
 
 Congratulations, you now have SponsorBlock installed.
-
 
 ## Configuration
 
@@ -40,3 +38,12 @@ Bonus points if you [provide the debug logs](https://kodi.wiki/view/Log_file/Eas
 #### Ad skip dialog is ugly
 
 Yeah, it definitely needs some work...
+
+#### Sharing a video with Kodi using Yatse doesn't trigger SponsorBlock
+
+This issue only occurs if you have the [Yatse helper script](https://yatse.tv/wiki/yatse-kodi-addon) installed and enabled.
+The helper script circumvents the YouTube add-on and instead uses `youtube_dl` to get a direct link to the video file.
+It doesn't look like you can extract the video id from the direct link so the only way to solve this is to disable the helper script.
+You don't need the helper script for YouTube videos if you have the YouTube add-on installed.
+
+I created an issue for this here: https://github.com/Tolriq/repository.yatse.kodi/issues/19
