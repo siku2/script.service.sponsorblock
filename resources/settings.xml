@@ -13,6 +13,9 @@
                     <level>1</level>
                     <default>false</default>
                     <control type="toggle"/>
+                    <dependencies>
+                        <dependency type="enable" setting="show_skipped_dialog">true</dependency>>
+                    </dependencies>
                 </setting>
 
                 <setting id="skip_count_tracking" type="boolean" label="32011" help="">
