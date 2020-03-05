@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 _CLOSE_ACTIONS = {xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU}
 
-AUTO_CLOSE_TIME = 10
+AUTO_CLOSE_TIME_IDLE = 10
+AUTO_CLOSE_TIME_INTERACTED = 3
 
 
 class SponsorSkipped(xbmcgui.WindowXMLDialog):
@@ -20,7 +21,7 @@ class SponsorSkipped(xbmcgui.WindowXMLDialog):
         self._on_expire = kwargs.pop("on_expire")  # type: Callable[[], None]
 
         self.__closed = False
-        self.__close_in = AUTO_CLOSE_TIME
+        self.__close_in = 0
 
         super(SponsorSkipped, self).__init__(*args, **kwargs)
 
@@ -41,7 +42,7 @@ class SponsorSkipped(xbmcgui.WindowXMLDialog):
 
     def __closer(self):
         monitor = xbmc.Monitor()
-        self.__reset_close_timer()
+        self.__reset_close_timer(interacted=False)
         while self.__close_in:
             if monitor.waitForAbort(1) or self.__closed:
                 return
@@ -59,8 +60,8 @@ class SponsorSkipped(xbmcgui.WindowXMLDialog):
         self.__closed = True
         super(SponsorSkipped, self).close()
 
-    def __reset_close_timer(self):
-        self.__close_in = AUTO_CLOSE_TIME
+    def __reset_close_timer(self, interacted=True):  # type: (bool) -> None
+        self.__close_in = AUTO_CLOSE_TIME_INTERACTED if interacted else AUTO_CLOSE_TIME_IDLE
 
     def onClick(self, control_id):  # type: (int) -> None
         close = True
