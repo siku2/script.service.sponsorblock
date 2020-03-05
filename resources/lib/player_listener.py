@@ -86,15 +86,15 @@ class PlayerListener(PlayerCheckpointListener):
         logger.debug("searching for next segment after %g", current_time)
         self._next_segment = next((seg for seg in self._segments if seg.start > current_time), None)
 
+    def _reset_next_checkpoint(self):
+        self._next_segment = None
+
     def _get_checkpoint(self):
         seg = self._next_segment
         return seg.start if seg is not None else None
 
     def _reached_checkpoint(self):
         seg = self._next_segment
-        # let the seek event handle setting the next segment
-        self._next_segment = None
-
         self.seekTime(seg.end)
 
         if not addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):

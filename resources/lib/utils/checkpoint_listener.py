@@ -128,7 +128,12 @@ class PlayerCheckpointListener(xbmc.Player):
             self._select_next_checkpoint()
             return
 
-        self._reached_checkpoint()
+        try:
+            self._reached_checkpoint()
+        except Exception:
+            logger.exception("something went wrong at checkpoint: %s", cp)
+
+        self._reset_next_checkpoint()
 
     def __t_event_loop(self):
         self._playback_speed = float(xbmc.getInfoLabel(VAR_PLAYER_SPEED))
@@ -217,12 +222,24 @@ class PlayerCheckpointListener(xbmc.Player):
         """
         raise NotImplementedError
 
+    def _reset_next_checkpoint(self):  # type: () -> None
+        """Reset the next checkpoint.
+
+        After calling this method `_get_next_checkpoint` MUST return `None`.
+
+        This is called AFTER `_reached_checkpoint`.
+        """
+        raise NotImplementedError
+
     def _get_checkpoint(self):  # type: () -> Optional[float]
         """Get the current checkpoint.
 
         This function should be computationally cheap.
         The return value of this function MUST only change when `_select_next_checkpoint` is called.
-        The only exception is that `_reached_checkpoint` should also set the next checkpoint to `None`
+        The only exception is `_reset_next_checkpoint`.
+
+        Returns:
+            Time in seconds of the next checkpoint. `None` if there is no checkpoint.
         """
         raise NotImplementedError
 
@@ -230,8 +247,5 @@ class PlayerCheckpointListener(xbmc.Player):
         """Called when a checkpoint is reached.
 
         This is called when the checkpoint returned by `_get_checkpoint` is reached.
-
-        After calling this `_get_checkpoint` MUST return `None`.
-        Otherwise it will be called over and over again.
         """
         raise NotImplementedError
