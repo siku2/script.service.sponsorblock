@@ -39,11 +39,3 @@ Bonus points if you [provide the debug logs](https://kodi.wiki/view/Log_file/Eas
 
 Yeah, it definitely needs some work...
 
-#### Sharing a video with Kodi using Yatse doesn't trigger SponsorBlock
-
-This issue only occurs if you have the [Yatse helper script](https://yatse.tv/wiki/yatse-kodi-addon) installed and enabled.
-The helper script circumvents the YouTube add-on and instead uses `youtube_dl` to get a direct link to the video file.
-It doesn't look like you can extract the video id from the direct link so the only way to solve this is to disable the helper script.
-You don't need the helper script for YouTube videos if you have the YouTube add-on installed.
-
-I created an issue for this here: https://github.com/Tolriq/repository.yatse.kodi/issues/19

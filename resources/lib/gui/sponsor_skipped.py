@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 _CLOSE_ACTIONS = {xbmcgui.ACTION_NAV_BACK, xbmcgui.ACTION_PREVIOUS_MENU}
 
-AUTO_CLOSE_TIME = 5
+AUTO_CLOSE_TIME = 10
 
 
 class SponsorSkipped(xbmcgui.WindowXMLDialog):

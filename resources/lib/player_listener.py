@@ -69,8 +69,7 @@ class PlayerListener(PlayerCheckpointListener):
         self._next_segment = None  # type: Optional[SponsorSegment]
 
     def onPlayBackStarted(self):  # type: () -> None
-        file_path = xbmc.getInfoLabel(VAR_PLAYER_FILE_AND_PATH)
-        video_id = youtube_api.video_id_from_path(file_path)
+        video_id = youtube_api.get_video_id()
         if not video_id:
             return
 

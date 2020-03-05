@@ -222,6 +222,7 @@ class PlayerCheckpointListener(xbmc.Player):
 
         This function should be computationally cheap.
         The return value of this function MUST only change when `_select_next_checkpoint` is called.
+        The only exception is that `_reached_checkpoint` should also set the next checkpoint to `None`
         """
         raise NotImplementedError
 
@@ -229,5 +230,8 @@ class PlayerCheckpointListener(xbmc.Player):
         """Called when a checkpoint is reached.
 
         This is called when the checkpoint returned by `_get_checkpoint` is reached.
+
+        After calling this `_get_checkpoint` MUST return `None`.
+        Otherwise it will be called over and over again.
         """
         raise NotImplementedError
