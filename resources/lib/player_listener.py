@@ -1,13 +1,11 @@
 import logging
 
-import xbmc
-
 from . import youtube_api
 from .gui.sponsor_skipped import SponsorSkipped
 from .sponsorblock import NotFound, SponsorBlockAPI, SponsorSegment
 from .utils import addon
 from .utils.checkpoint_listener import PlayerCheckpointListener
-from .utils.const import CONF_AUTO_UPVOTE, CONF_SHOW_SKIPPED_DIALOG, CONF_SKIP_COUNT_TRACKING, VAR_PLAYER_FILE_AND_PATH
+from .utils.const import CONF_AUTO_UPVOTE, CONF_SHOW_SKIPPED_DIALOG, CONF_SKIP_COUNT_TRACKING
 
 logger = logging.getLogger(__name__)
 

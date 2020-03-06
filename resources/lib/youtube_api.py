@@ -1,10 +1,10 @@
 """Module for accessing data from the youtube plugin."""
 
+import itertools
 import json
 import logging
 
 import xbmc
-import xbmcgui
 from six.moves.urllib import parse as urlparse
 
 from .utils import jsonrpc
@@ -16,73 +16,40 @@ ADDON_ID = "plugin.video.youtube"
 
 NOTIFICATION_PLAYBACK_STARTED = "Other.PlaybackStarted"
 
-WINDOW_ID = 10000
-PROP_PLAYBACK_JSON = "playback_json"
-
 
 def parse_notification_payload(data):  # type: (str) -> Any
     args = json.loads(data)
     return json.loads(urlparse.unquote(args[0]))
 
 
-def get_home_property(key):  # type: (str) -> Any
-    return xbmcgui.Window(WINDOW_ID).getProperty("{}-{}".format(ADDON_ID, key))
-
-
-def get_playback_json():  # type: () -> dict
-    """
-
-    The YouTube plugin uses window properties to store data.
-    One such property called "playback_json" is used to store data for the current video.
-    This function retrieves this property and converts it to a `dict`.
-
-    Warnings:
-        The property is read in the `onPlayBackStarted` event and immediately removed.
-        This property should only be used in the short time frame starting when the YouTube plugin resolved the video
-        and ending when Kodi starts playing it.
-
-        Source: https://github.com/jdf76/plugin.video.youtube/blob/63e35e/resources/lib/youtube_plugin/kodion/utils/player.py#L397
-
-    Returns:
-        `dict` containing the playback data
-    """
-    return json.loads(get_home_property(PROP_PLAYBACK_JSON))
-
-
 _IMAGE_SCHEME = "image://"
 
 
-def get_thumbnail_path():  # type: () -> Optional[str]
-    result = jsonrpc.execute("Player.GetItem", 1, ["art"])
-    art = result["item"]["art"]  # type: dict
-    try:
-        thumbnail = art["thumb"]  # type: str
-    except KeyError:
-        _logger.debug("no thumbnail provided")
-        return None
+def _extract_image_url(img):  # type: (str) -> str
+    if not img.startswith(_IMAGE_SCHEME):
+        return img
 
-    if not thumbnail.startswith(_IMAGE_SCHEME):
-        _logger.warning("expected thumbnail url to start with %r, got %r", _IMAGE_SCHEME, thumbnail)
-        return None
-
-    return urlparse.unquote(thumbnail[len(_IMAGE_SCHEME):])
+    return urlparse.unquote(img[len(_IMAGE_SCHEME):])
 
 
 DOMAIN_THUMBNAIL = "ytimg.com"
 
 
-def video_id_from_thumbnail():
+def _video_id_from_art(art, has_context):  # type: (dict, bool) -> Optional[str]
     """
     Example path: `https://i.ytimg.com/vi/SQCfOjhguO0/hqdefault.jpg/`
     """
-    thumb_path = get_thumbnail_path()
-    if not thumb_path:
+    try:
+        thumb = art["thumb"]  # type: str
+    except KeyError:
         return None
+    else:
+        thumb_path = _extract_image_url(thumb)
 
     try:
         thumb_url = urlparse.urlsplit(thumb_path)  # type: urlparse.SplitResult
     except ValueError:
-        _logger.exception("thumbnail isn't a URL: %r", thumb_path)
+        _logger.debug("thumbnail isn't a URL: %r", thumb_path)
         return None
 
     if DOMAIN_THUMBNAIL not in thumb_url.hostname:
@@ -90,10 +57,66 @@ def video_id_from_thumbnail():
 
     parts = thumb_url.path.split("/", 3)
     if len(parts) < 3:
-        _logger.warning("thumbnail from ytimg.com with unknown path %r", thumb_url.path)
+        _logger.warning("thumbnail from ytimg.com with invalid path %r", thumb_url.path)
         return None
 
     return parts[2]
+
+
+# unique ids that explicitly identify a youtube video.
+_EXPLICIT_UIDS = ("youtubeid", "youtube_id")
+# unique ids that require context
+_CONTEXT_UIDS = ("videoid", "video_id")
+
+
+def _video_id_from_ids(unique_ids, has_context):  # type: (dict, bool) -> Optional[str]
+    if has_context:
+        keys = itertools.chain(_EXPLICIT_UIDS, _CONTEXT_UIDS)
+    else:
+        keys = _EXPLICIT_UIDS
+
+    for key in keys:
+        try:
+            return unique_ids[key]
+        except KeyError:
+            pass
+
+
+def video_id_from_list_item(has_context):  # type: (bool) -> Optional[str]
+    try:
+        result = jsonrpc.execute("Player.GetItem", jsonrpc.PLAYER_VIDEO, [
+            jsonrpc.LIST_FIELD_ART,
+            jsonrpc.LIST_FIELD_UNIQUEID,
+        ])
+    except Exception:
+        _logger.exception("failed to get item from JSON RPC")
+        return None
+
+    item = result["item"]  # type: dict
+
+    # extract from unique ids
+
+    try:
+        unique_ids = item[jsonrpc.LIST_FIELD_UNIQUEID]
+    except KeyError:
+        pass
+    else:
+        video_id = _video_id_from_ids(unique_ids, has_context)
+        if video_id:
+            return video_id
+
+    # extract from art
+
+    try:
+        art = item[jsonrpc.LIST_FIELD_ART]
+    except KeyError:
+        pass
+    else:
+        video_id = _video_id_from_art(art, has_context)
+        if video_id:
+            return video_id
+
+    return None
 
 
 def get_playing_file_path():  # type: () -> str
@@ -123,12 +146,11 @@ def get_video_id():  # type: () -> Option[str]
     valid_url = path_url.scheme == SCHEME_PLUGIN and \
                 path_url.netloc == ADDON_ID and \
                 path_url.path.startswith(PATH_PLAY)
-    if not valid_url:
-        if path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO):
-            _logger.info("playing a video file from googlevideo.com, trying to extract video id from thumbnail")
-            return video_id_from_thumbnail()
+    if valid_url:
+        query = urlparse.parse_qs(path_url.query)
+        return query.get("video_id")
 
-        return None
-
-    query = urlparse.parse_qs(path_url.query)
-    return query.get("video_id")
+    # has_context denotes whether the current video seems to be a youtube video
+    # being played outside of the YouTube add-on.
+    has_context = path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO)
+    return video_id_from_list_item(has_context)

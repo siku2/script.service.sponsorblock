@@ -37,3 +37,11 @@ def result_from_response(res):  # type: (dict) -> Any
         raise ValueError("response is neither result nor error")
 
     raise JSONRPCError(error["code"], error["message"])
+
+
+PLAYER_MUSIC = 0
+PLAYER_VIDEO = 1
+PLAYER_PICTURE = 2
+
+LIST_FIELD_ART = "art"
+LIST_FIELD_UNIQUEID = "uniqueid"
