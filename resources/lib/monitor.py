@@ -7,7 +7,7 @@ from .player_listener import PlayerListener
 from .sponsorblock import SponsorBlockAPI
 from .sponsorblock.utils import new_user_id
 from .utils import addon
-from .utils.const import CONF_API_SERVER, CONF_USER_ID
+from .utils.const import CONF_API_SERVER, CONF_USER_ID, CONF_CATEGORY_CUSTOM, CONF_CATEGORIES_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +22,24 @@ def get_user_id():
     return user_id
 
 
+def get_categories():
+    categories = set()
+
+    for category, conf_key in CONF_CATEGORIES_MAP.items():
+        if addon.get_config(conf_key, bool):
+            categories.add(category)
+
+    custom_categories = addon.get_config(CONF_CATEGORY_CUSTOM, str)
+    categories.update(category.strip() for category in custom_categories.split(","))
+    return list(categories)
+
+
 class Monitor(xbmc.Monitor):
     def __init__(self):
         self._api = SponsorBlockAPI(
             user_id=get_user_id(),
             api_server=addon.get_config(CONF_API_SERVER, str),
+            categories=get_categories(),
         )
 
         self._player_listener = PlayerListener(api=self._api)
@@ -43,6 +56,17 @@ class Monitor(xbmc.Monitor):
         api = self._api
         api.set_user_id(get_user_id())
         api.set_api_server(addon.get_config(CONF_API_SERVER, str))
+        api.set_categories(get_categories())
+
+    def __handler_playback_init(self, data):
+        try:
+            video_id = data["video_id"]
+        except KeyError:
+            logger.warning("received playbackinit notification without video id")
+            return
+        
+        # preload the segments
+        self._player_listener.load_segments(video_id)
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
         if sender != youtube_api.ADDON_ID:
@@ -51,7 +75,10 @@ class Monitor(xbmc.Monitor):
         try:
             data = youtube_api.parse_notification_payload(data)
         except Exception:
-            logger.exception("failed to parse notification payload (%s): %r", method, data)
+            logger.exception(
+                "failed to parse notification payload (%s): %r", method, data)
             return
 
         logger.debug("notification from YouTube addon: %r %s", method, data)
+        if method == youtube_api.NOTIFICATION_PLAYBACK_INIT:
+            self.__handler_playback_init(data)

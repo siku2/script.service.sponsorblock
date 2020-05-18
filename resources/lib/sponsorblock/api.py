@@ -26,13 +26,15 @@ def get_segment_uuid(segment):  # type: (Union[str, SponsorSegment]) -> str
 
 
 class SponsorBlockAPI:
-    def __init__(self, user_id=None, api_server=None):
+    def __init__(self, user_id=None, api_server=None, categories=None):
         self._user_id = user_id or new_user_id()
         self._session = requests.Session()
         self._session.headers["User-Agent"] = get_user_agent()
 
         self._api_server = api_server or DEFAULT_SERVER
         self._request_timeout = 10
+
+        self.set_categories(categories or [])
 
     def set_api_server(self, api_server):  # type: (Optional[str]) -> None
         if not api_server:
@@ -46,6 +48,10 @@ class SponsorBlockAPI:
             user_id = new_user_id()
 
         self._user_id = user_id
+    
+    def set_categories(self, categories):
+        assert isinstance(categories, list)
+        self._categories_param = json.dumps(categories)
 
     def _request(self, method, url, params, is_json=True):
         req_cm = self._session.request(
@@ -62,10 +68,11 @@ class SponsorBlockAPI:
             else:
                 return None
 
-    def get_skip_segments(self, video_id, categories=None):  # type: (str, List[str]) -> List[SponsorSegment]
-        params = {"videoID": video_id}
-        if categories is not None:
-            params["categories"] = json.dumps(categories)
+    def get_skip_segments(self, video_id):  # type: (str, List[str]) -> List[SponsorSegment]
+        params = {
+            "videoID": video_id, 
+            "categories": self._categories_param,
+        }
 
         data = self._request("GET", GET_SKIP_SEGMENTS, params)
 

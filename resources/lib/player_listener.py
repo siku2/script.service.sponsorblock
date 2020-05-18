@@ -63,19 +63,27 @@ class PlayerListener(PlayerCheckpointListener):
 
         super(PlayerListener, self).__init__(*args, **kwargs)
 
+        self._segments_video_id = None
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
+
+    def load_segments(self, video_id):
+        if video_id != self._segments_video_id:
+            self._segments_video_id = video_id
+            self._segments = get_sponsor_segments(self._api, video_id)
+        else:
+            logger.info("segments for video %s already loaded", video_id)
+        
+        return bool(self._segments)
 
     def onPlayBackStarted(self):  # type: () -> None
         video_id = youtube_api.get_video_id()
         if not video_id:
             return
 
-        segments = get_sponsor_segments(self._api, video_id)
-        if not segments:
+        if not self.load_segments(video_id):
             return
 
-        self._segments = segments
         self._next_segment = segments[0]
         self.start()
 
@@ -91,13 +99,7 @@ class PlayerListener(PlayerCheckpointListener):
         seg = self._next_segment
         return seg.start if seg is not None else None
 
-    def _reached_checkpoint(self):
-        seg = self._next_segment
-        self.seekTime(seg.end)
-
-        if not addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
-            return
-
+    def __show_skipped_dialog(self, seg):
         def unskip():
             logger.debug("unskipping segment %s", seg)
             self.seekTime(seg.start)
@@ -116,6 +118,14 @@ class PlayerListener(PlayerCheckpointListener):
             vote_on_segment(self._api, seg, upvote=True, notify_success=False)
 
         SponsorSkipped.display_async(unskip, report, on_expire)
+
+    def _reached_checkpoint(self):
+        seg = self._next_segment
+        // TODO handle seg.end being beyond end of video!
+        self.seekTime(seg.end)
+
+        if addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
+            self.__show_skipped_dialog(seg)
 
         if addon.get_config(CONF_SKIP_COUNT_TRACKING, bool):
             logger.debug("reporting sponsor skipped")

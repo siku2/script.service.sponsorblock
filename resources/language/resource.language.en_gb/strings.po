@@ -104,3 +104,16 @@ msgstr ""
 msgctxt "#32019"
 msgid "Donation/Message Readings"
 msgstr ""
+
+
+msgctxt "#32023"
+msgid "Custom"
+msgstr ""
+
+msgctxt "#32024"
+msgid "Custom Categories"
+msgstr ""
+
+msgctxt "#32025"
+msgid "Comma-separated list of categories"
+msgstr ""
