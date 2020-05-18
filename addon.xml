@@ -4,7 +4,7 @@
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
-        <import addon="plugin.video.youtube" version="6.6.0"/>
+        <import addon="plugin.video.youtube" version="6.7.0"/>
     </requires>
 
     <extension point="xbmc.service" library="service.py"/>

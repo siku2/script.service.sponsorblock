@@ -1,9 +1,9 @@
+import json
 import logging
 
 import requests
-from six.moves import zip
 
-from .endpoints import DEFAULT_SERVER, GET_VIDEO_SPONSOR_TIMES, VIEWED_VIDEO_SPONSOR_TIME, VOTE_ON_SPONSOR_TIME
+from .endpoints import DEFAULT_SERVER, GET_SKIP_SEGMENTS, VIEWED_VIDEO_SPONSOR_TIME, VOTE_ON_SPONSOR_TIME
 from .errors import error_from_response
 from .models import SponsorSegment
 from .utils import new_user_id
@@ -62,14 +62,20 @@ class SponsorBlockAPI:
             else:
                 return None
 
-    def get_video_sponsor_times(self, video_id):  # type: (str) -> List[SponsorSegment]
-        data = self._request("GET", GET_VIDEO_SPONSOR_TIMES, {"videoID": video_id})
+    def get_skip_segments(self, video_id, categories=None):  # type: (str, List[str]) -> List[SponsorSegment]
+        params = {"videoID": video_id}
+        if categories is not None:
+            params["categories"] = json.dumps(categories)
 
-        uuids = data["UUIDs"]
-        sponsor_times = data["sponsorTimes"]
+        data = self._request("GET", GET_SKIP_SEGMENTS, params)
 
-        return [SponsorSegment(uuid, start, end)
-                for uuid, (start, end) in zip(uuids, sponsor_times)]
+        segments = []
+        for raw in data:
+            start, end = raw["segment"]
+            seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
+            segments.append(seg)
+
+        return segments
 
     def vote_sponsor_segment(self, segment, upvote=False):  # type: (Union[str, SponsorSegment], bool) -> None
         self._request("POST", VOTE_ON_SPONSOR_TIME, {

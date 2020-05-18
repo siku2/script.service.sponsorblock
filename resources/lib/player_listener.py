@@ -28,7 +28,7 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
 
 def get_sponsor_segments(api, video_id):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
     try:
-        segments = api.get_video_sponsor_times(video_id)
+        segments = api.get_skip_segments(video_id)
     except NotFound:
         logger.info("video %s has no sponsor segments", video_id)
         return None
