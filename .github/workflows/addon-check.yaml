@@ -10,6 +10,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Clean workspace
+      run: |
+        rm -r tools
+
     - name: Kodi addon checker validation
       id: kodi-addon-checker
       uses: xbmc/action-kodi-addon-checker@v1.0
