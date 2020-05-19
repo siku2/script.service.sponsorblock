@@ -1,10 +1,9 @@
-DEFAULT_SERVER = "api.sponsor.ajay.app"
+DEFAULT_SERVER = "sponsor.ajay.app"
 
 _BASE_URL = "https://{SERVER}"
 _API_URL = _BASE_URL + "/api"
 
-GET_VIDEO_SPONSOR_TIMES = _API_URL + "/getVideoSponsorTimes"
-POST_VIDEO_SPONSOR_TIMES = _API_URL + "/postVideoSponsorTimes"
+GET_SKIP_SEGMENTS = _API_URL + "/skipSegments"
 VOTE_ON_SPONSOR_TIME = _API_URL + "/voteOnSponsorTime"
 VIEWED_VIDEO_SPONSOR_TIME = _API_URL + "/viewedVideoSponsorTime"
 

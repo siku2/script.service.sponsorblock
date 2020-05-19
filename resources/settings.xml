@@ -18,10 +18,72 @@
                     </dependencies>
                 </setting>
 
+                <setting id="ignore_unlisted" type="boolean" label="32026" help="">
+                    <level>1</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+
                 <setting id="skip_count_tracking" type="boolean" label="32011" help="">
                     <level>2</level>
                     <default>true</default>
                     <control type="toggle"/>
+                </setting>
+            </group>
+        </category>
+
+        <category id="categories" label="32020" help="">
+            <group id="1" label="">
+                <setting id="category_sponsor" type="boolean" label="32013" help="">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="category_intro" type="boolean" label="32014" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="category_outro" type="boolean" label="32015" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="category_interaction" type="boolean" label="32016" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="category_selfpromo" type="boolean" label="32017" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="2" label="32022">
+                <setting id="category_music_offtopic" type="boolean" label="32018" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="3" label="32021">
+                <setting id="category_livestream_messages" type="boolean" label="32019" help="">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="4" label="32023">
+                <setting id="category_custom" type="string" label="32024" help="">
+                    <level>2</level>
+                    <default/>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32025</heading>
+                    </control>
                 </setting>
             </group>
         </category>
@@ -42,7 +104,7 @@
             <group id="2" label="">
                 <setting id="api_server" type="string" label="32002" help="">
                     <level>3</level>
-                    <default>api.sponsor.ajay.app</default>
+                    <default>sponsor.ajay.app</default>
                     <constraints>
                         <allowempty>false</allowempty>
                     </constraints>

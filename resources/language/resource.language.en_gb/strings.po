@@ -2,7 +2,6 @@
 # Addon Name: SponsorBlock
 # Addon id: script.service.sponsorblock
 # Addon Provider: siku2
-
 msgid ""
 msgstr ""
 "MIME-Version: 1.0\n"
@@ -11,12 +10,6 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# next number: 32013
-
-
-# SETTINGS
-
-#   general category
 
 msgctxt "#32001"
 msgid "General"
@@ -24,6 +17,14 @@ msgstr ""
 
 msgctxt "#32006"
 msgid "Show dialog after ad skip"
+msgstr ""
+
+msgctxt "#32020"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#32026"
+msgid "Ignore unlisted videos"
 msgstr ""
 
 msgctxt "#32011"
@@ -34,7 +35,6 @@ msgctxt "#32012"
 msgid "Auto Upvote"
 msgstr ""
 
-#   api category
 
 msgctxt "#32007"
 msgid "API"
@@ -49,8 +49,6 @@ msgid "User ID"
 msgstr ""
 
 
-# NOTIFICATIONS
-
 msgctxt "#32004"
 msgid "Failed to submit vote"
 msgstr ""
@@ -59,8 +57,6 @@ msgctxt "#32005"
 msgid "Submitted vote"
 msgstr ""
 
-
-# SPONSOR SKIPPED DIALOG
 
 msgctxt "#32008"
 msgid "Skipped sponsor segment"
@@ -72,4 +68,61 @@ msgstr ""
 
 msgctxt "#32010"
 msgid "report"
+msgstr ""
+
+
+msgctxt "#32013"
+msgid "Sponsor"
+msgstr ""
+
+msgctxt "#32014"
+msgid "Intro"
+msgstr ""
+
+msgctxt "#32015"
+msgid "Endcards/Credits"
+msgstr ""
+
+msgctxt "#32016"
+msgid "Interaction Reminder (Subscribe)"
+msgstr ""
+
+msgctxt "#32017"
+msgid "Self-Promotion and Merchandise"
+msgstr ""
+
+
+msgctxt "#32022"
+msgid "Music"
+msgstr ""
+
+msgctxt "#32018"
+msgid "Non-Music Section"
+msgstr ""
+
+
+msgctxt "#32021"
+msgid "Livestream"
+msgstr ""
+
+msgctxt "#32019"
+msgid "Donation/Message Readings"
+msgstr ""
+
+
+msgctxt "#32023"
+msgid "Custom"
+msgstr ""
+
+msgctxt "#32024"
+msgid "Custom Categories"
+msgstr ""
+
+msgctxt "#32025"
+msgid "Comma-separated list of categories"
+msgstr ""
+
+
+msgctxt "#32027"
+msgid "SponsorBlock Settings"
 msgstr ""

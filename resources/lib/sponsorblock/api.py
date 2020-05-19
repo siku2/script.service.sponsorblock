@@ -1,9 +1,9 @@
+import json
 import logging
 
 import requests
-from six.moves import zip
 
-from .endpoints import DEFAULT_SERVER, GET_VIDEO_SPONSOR_TIMES, VIEWED_VIDEO_SPONSOR_TIME, VOTE_ON_SPONSOR_TIME
+from .endpoints import DEFAULT_SERVER, GET_SKIP_SEGMENTS, VIEWED_VIDEO_SPONSOR_TIME, VOTE_ON_SPONSOR_TIME
 from .errors import error_from_response
 from .models import SponsorSegment
 from .utils import new_user_id
@@ -26,13 +26,15 @@ def get_segment_uuid(segment):  # type: (Union[str, SponsorSegment]) -> str
 
 
 class SponsorBlockAPI:
-    def __init__(self, user_id=None, api_server=None):
+    def __init__(self, user_id=None, api_server=None, categories=None):
         self._user_id = user_id or new_user_id()
         self._session = requests.Session()
         self._session.headers["User-Agent"] = get_user_agent()
 
         self._api_server = api_server or DEFAULT_SERVER
         self._request_timeout = 10
+
+        self.set_categories(categories or [])
 
     def set_api_server(self, api_server):  # type: (Optional[str]) -> None
         if not api_server:
@@ -46,6 +48,10 @@ class SponsorBlockAPI:
             user_id = new_user_id()
 
         self._user_id = user_id
+
+    def set_categories(self, categories):
+        assert isinstance(categories, list)
+        self._categories_param = json.dumps(categories)
 
     def _request(self, method, url, params, is_json=True):
         req_cm = self._session.request(
@@ -62,14 +68,21 @@ class SponsorBlockAPI:
             else:
                 return None
 
-    def get_video_sponsor_times(self, video_id):  # type: (str) -> List[SponsorSegment]
-        data = self._request("GET", GET_VIDEO_SPONSOR_TIMES, {"videoID": video_id})
+    def get_skip_segments(self, video_id):  # type: (str, List[str]) -> List[SponsorSegment]
+        params = {
+            "videoID": video_id,
+            "categories": self._categories_param,
+        }
 
-        uuids = data["UUIDs"]
-        sponsor_times = data["sponsorTimes"]
+        data = self._request("GET", GET_SKIP_SEGMENTS, params)
 
-        return [SponsorSegment(uuid, start, end)
-                for uuid, (start, end) in zip(uuids, sponsor_times)]
+        segments = []
+        for raw in data:
+            start, end = raw["segment"]
+            seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
+            segments.append(seg)
+
+        return segments
 
     def vote_sponsor_segment(self, segment, upvote=False):  # type: (Union[str, SponsorSegment], bool) -> None
         self._request("POST", VOTE_ON_SPONSOR_TIME, {
