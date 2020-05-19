@@ -30,7 +30,8 @@ def get_categories():
             categories.add(category)
 
     custom_categories = addon.get_config(CONF_CATEGORY_CUSTOM, str)
-    categories.update(category.strip() for category in custom_categories.split(","))
+    categories.update(filter(None, (category.strip() for category in custom_categories.split(","))))
+    logger.info("skipping the following categories: %s", categories)
     return list(categories)
 
 
@@ -67,6 +68,7 @@ class Monitor(xbmc.Monitor):
 
         # preload the segments
         self._player_listener.load_segments(video_id)
+        logger.debug("preloaded segments for video %s", video_id)
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
         if sender != youtube_api.ADDON_ID:

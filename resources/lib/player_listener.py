@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from . import youtube_api
 from .gui.sponsor_skipped import SponsorSkipped
@@ -63,16 +64,18 @@ class PlayerListener(PlayerCheckpointListener):
 
         super(PlayerListener, self).__init__(*args, **kwargs)
 
+        self._load_segment_lock = threading.Lock()
         self._segments_video_id = None
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
 
     def load_segments(self, video_id):
-        if video_id != self._segments_video_id:
-            self._segments_video_id = video_id
-            self._segments = get_sponsor_segments(self._api, video_id)
-        else:
-            logger.info("segments for video %s already loaded", video_id)
+        with self._load_segment_lock:
+            if video_id != self._segments_video_id:
+                self._segments_video_id = video_id
+                self._segments = get_sponsor_segments(self._api, video_id)
+            else:
+                logger.info("segments for video %s already loaded", video_id)
 
         return bool(self._segments)
 
@@ -84,7 +87,7 @@ class PlayerListener(PlayerCheckpointListener):
         if not self.load_segments(video_id):
             return
 
-        self._next_segment = segments[0]
+        self._next_segment = self._segments[0]
         self.start()
 
     def _select_next_checkpoint(self):

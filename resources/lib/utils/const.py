@@ -4,7 +4,7 @@ CONF_SHOW_SKIPPED_DIALOG = "show_skipped_dialog"
 CONF_SKIP_COUNT_TRACKING = "skip_count_tracking"
 CONF_USER_ID = "user_id"
 
-CONF_CATEGORY_CUSTOM = "category_sponsor"
+CONF_CATEGORY_CUSTOM = "category_custom"
 
 CONF_CATEGORY_SPONSOR = "category_sponsor"
 CONF_CATEGORY_INTRO = "category_intro"
