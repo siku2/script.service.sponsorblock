@@ -7,7 +7,7 @@ from .player_listener import PlayerListener
 from .sponsorblock import SponsorBlockAPI
 from .sponsorblock.utils import new_user_id
 from .utils import addon
-from .utils.const import CONF_API_SERVER, CONF_CATEGORIES_MAP, CONF_CATEGORY_CUSTOM, CONF_USER_ID
+from .utils.const import CONF_API_SERVER, CONF_CATEGORIES_MAP, CONF_CATEGORY_CUSTOM, CONF_IGNORE_UNLISTED, CONF_USER_ID
 
 logger = logging.getLogger(__name__)
 
@@ -66,9 +66,14 @@ class Monitor(xbmc.Monitor):
             logger.warning("received playbackinit notification without video id")
             return
 
+        unlisted = data.get("unlisted", False)
+        if unlisted and addon.get_config(CONF_IGNORE_UNLISTED, bool):
+            logger.info("ignoring video %s because it's unlisted", video_id)
+            self._player_listener.ignore_next_video(video_id)
+            return
+
         # preload the segments
-        self._player_listener.load_segments(video_id)
-        logger.debug("preloaded segments for video %s", video_id)
+        self._player_listener.preload_segments(video_id)
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
         if sender != youtube_api.ADDON_ID:

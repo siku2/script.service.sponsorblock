@@ -23,6 +23,10 @@ msgctxt "#32020"
 msgid "Categories"
 msgstr ""
 
+msgctxt "#32026"
+msgid "Ignore unlisted videos"
+msgstr ""
+
 msgctxt "#32011"
 msgid "Enable Sponsor Skip Count Tracking"
 msgstr ""

@@ -65,11 +65,31 @@ class PlayerListener(PlayerCheckpointListener):
         super(PlayerListener, self).__init__(*args, **kwargs)
 
         self._load_segment_lock = threading.Lock()
+        self._ignore_next_video_id = None
         self._segments_video_id = None
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
 
-    def load_segments(self, video_id):
+    def preload_segments(self, video_id):
+        assert not self._thread_running
+
+        if self._load_segment_lock.locked():
+            # try to avoid waiting for the lock
+            return
+
+        logger.debug("preloading segments for video %s", video_id)
+        self._prepare_segments(video_id)
+
+    def ignore_next_video(self, video_id):
+        assert not self._thread_running
+        self._ignore_next_video_id = video_id
+
+    def _take_ignore_next_video_id(self):
+        v = self._ignore_next_video_id
+        self._ignore_next_video_id = None
+        return v
+
+    def _prepare_segments(self, video_id):
         with self._load_segment_lock:
             if video_id != self._segments_video_id:
                 self._segments_video_id = video_id
@@ -84,7 +104,11 @@ class PlayerListener(PlayerCheckpointListener):
         if not video_id:
             return
 
-        if not self.load_segments(video_id):
+        if video_id == self._take_ignore_next_video_id():
+            logger.debug("ignoring video %s because it's ignored", video_id)
+            return
+
+        if not self._prepare_segments(video_id):
             return
 
         self._next_segment = self._segments[0]
