@@ -121,3 +121,8 @@ msgstr ""
 msgctxt "#32025"
 msgid "Comma-separated list of categories"
 msgstr ""
+
+
+msgctxt "#32027"
+msgid "SponsorBlock Settings"
+msgstr ""
