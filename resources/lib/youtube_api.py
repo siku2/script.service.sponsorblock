@@ -16,6 +16,7 @@ ADDON_ID = "plugin.video.youtube"
 
 NOTIFICATION_PLAYBACK_INIT = "Other.PlaybackInit"
 
+
 def parse_notification_payload(data):  # type: (str) -> Any
     args = json.loads(data)
     return json.loads(urlparse.unquote(args[0]))

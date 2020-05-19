@@ -73,7 +73,7 @@ class PlayerListener(PlayerCheckpointListener):
             self._segments = get_sponsor_segments(self._api, video_id)
         else:
             logger.info("segments for video %s already loaded", video_id)
-        
+
         return bool(self._segments)
 
     def onPlayBackStarted(self):  # type: () -> None
@@ -121,7 +121,7 @@ class PlayerListener(PlayerCheckpointListener):
 
     def _reached_checkpoint(self):
         seg = self._next_segment
-        // TODO handle seg.end being beyond end of video!
+        # TODO handle seg.end being beyond end of video!
         self.seekTime(seg.end)
 
         if addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):

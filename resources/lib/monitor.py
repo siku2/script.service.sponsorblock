@@ -7,7 +7,7 @@ from .player_listener import PlayerListener
 from .sponsorblock import SponsorBlockAPI
 from .sponsorblock.utils import new_user_id
 from .utils import addon
-from .utils.const import CONF_API_SERVER, CONF_USER_ID, CONF_CATEGORY_CUSTOM, CONF_CATEGORIES_MAP
+from .utils.const import CONF_API_SERVER, CONF_CATEGORIES_MAP, CONF_CATEGORY_CUSTOM, CONF_USER_ID
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class Monitor(xbmc.Monitor):
         except KeyError:
             logger.warning("received playbackinit notification without video id")
             return
-        
+
         # preload the segments
         self._player_listener.load_segments(video_id)
 

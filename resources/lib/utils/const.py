@@ -26,7 +26,6 @@ CONF_CATEGORIES_MAP = {
     "livestream_messages": CONF_CATEGORY_LIVESTREAM_MESSAGES,
 }
 
-
 VAR_PLAYER_PAUSED = "Player.Paused"
 VAR_PLAYER_SPEED = "Player.PlaySpeed"
 VAR_PLAYER_FILE_AND_PATH = "Player.FilenameAndPath"

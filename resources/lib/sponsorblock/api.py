@@ -48,7 +48,7 @@ class SponsorBlockAPI:
             user_id = new_user_id()
 
         self._user_id = user_id
-    
+
     def set_categories(self, categories):
         assert isinstance(categories, list)
         self._categories_param = json.dumps(categories)
@@ -70,7 +70,7 @@ class SponsorBlockAPI:
 
     def get_skip_segments(self, video_id):  # type: (str, List[str]) -> List[SponsorSegment]
         params = {
-            "videoID": video_id, 
+            "videoID": video_id,
             "categories": self._categories_param,
         }
 
