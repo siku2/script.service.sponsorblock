@@ -33,6 +33,7 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
 - Option to disable SponsorBlock for unlisted videos.
 - Added context menu entry to the YouTube plugin for SponsorBlock
 - Preload skip segments to catch sponsors at the start of a video
+- Fixed the bug which causes a video to keep playing even after the video ended
         </news>
         <platform>all</platform>
         <license>MIT</license>

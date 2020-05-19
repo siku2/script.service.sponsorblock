@@ -148,8 +148,11 @@ class PlayerListener(PlayerCheckpointListener):
 
     def _reached_checkpoint(self):
         seg = self._next_segment
-        # TODO handle seg.end being beyond end of video!
-        self.seekTime(seg.end)
+        if seg.end >= self.getTotalTime():
+            logger.debug("segment ends after end of video, skipping to next video")
+            self.playnext()
+        else:
+            self.seekTime(seg.end)
 
         if addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
             self.__show_skipped_dialog(seg)
