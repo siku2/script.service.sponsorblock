@@ -64,7 +64,7 @@ msgstr "Sponsor-Segment übersprungen"
 
 msgctxt "#32009"
 msgid "unskip"
-msgstr "Überspringen rückgängig machen"
+msgstr "Zurück"
 
 msgctxt "#32010"
 msgid "report"
@@ -120,7 +120,7 @@ msgstr "Benutzerdefinierte Kategorien"
 
 msgctxt "#32025"
 msgid "Comma-separated list of categories"
-msgstr "Mit Kommata unterteilte Liste von Kategorien"
+msgstr "Komma getrennte Liste von Kategorien"
 
 
 msgctxt "#32027"
