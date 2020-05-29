@@ -1,0 +1,128 @@
+# Kodi Media Center language file
+# Addon Name: SponsorBlock
+# Addon id: script.service.sponsorblock
+# Addon Provider: siku2
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+msgctxt "#32001"
+msgid "General"
+msgstr "Allgemein"
+
+msgctxt "#32006"
+msgid "Show dialog after ad skip"
+msgstr "Dialog nach dem Überspringen anzeigen"
+
+msgctxt "#32020"
+msgid "Categories"
+msgstr "Kategorien"
+
+msgctxt "#32026"
+msgid "Ignore unlisted videos"
+msgstr "Nicht gelistete Videos ignorieren"
+
+msgctxt "#32011"
+msgid "Enable Sponsor Skip Count Tracking"
+msgstr "Tracking für übersprungene Sponsor-Segmente aktivieren"
+
+msgctxt "#32012"
+msgid "Auto Upvote"
+msgstr "Automatische Upvotes"
+
+
+msgctxt "#32007"
+msgid "API"
+msgstr "API"
+
+msgctxt "#32002"
+msgid "Server Domain"
+msgstr "Server-Domain"
+
+msgctxt "#32003"
+msgid "User ID"
+msgstr "Benutzer-ID"
+
+
+msgctxt "#32004"
+msgid "Failed to submit vote"
+msgstr "Fehler beim Übermitteln des Votes"
+
+msgctxt "#32005"
+msgid "Submitted vote"
+msgstr "Vote übermittelt"
+
+
+msgctxt "#32008"
+msgid "Skipped sponsor segment"
+msgstr "Sponsor-Segment übersprungen"
+
+msgctxt "#32009"
+msgid "unskip"
+msgstr "Überspringen rückgängig machen"
+
+msgctxt "#32010"
+msgid "report"
+msgstr "Melden"
+
+
+msgctxt "#32013"
+msgid "Sponsor"
+msgstr "Sponsor"
+
+msgctxt "#32014"
+msgid "Intro"
+msgstr "Einführung"
+
+msgctxt "#32015"
+msgid "Endcards/Credits"
+msgstr "Endcards / Abspann"
+
+msgctxt "#32016"
+msgid "Interaction Reminder (Subscribe)"
+msgstr "Mitwirkungs-Erinnerungen (Abonnieren)"
+
+msgctxt "#32017"
+msgid "Self-Promotion and Merchandise"
+msgstr "Eigenwerbung und Merchandise"
+
+
+msgctxt "#32022"
+msgid "Music"
+msgstr "Musik"
+
+msgctxt "#32018"
+msgid "Non-Music Section"
+msgstr "Sektionen ohne Musik"
+
+
+msgctxt "#32021"
+msgid "Livestream"
+msgstr "Livestream"
+
+msgctxt "#32019"
+msgid "Donation/Message Readings"
+msgstr "Spenden / Nachrichtenlesungen"
+
+
+msgctxt "#32023"
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+msgctxt "#32024"
+msgid "Custom Categories"
+msgstr "Benutzerdefinierte Kategorien"
+
+msgctxt "#32025"
+msgid "Comma-separated list of categories"
+msgstr "Mit Kommata unterteilte Liste von Kategorien"
+
+
+msgctxt "#32027"
+msgid "SponsorBlock Settings"
+msgstr "SponsorBlock-Einstellungen"
