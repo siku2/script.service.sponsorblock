@@ -38,10 +38,10 @@ To do this refer to the [Import an existing account](https://github.com/siku2/sc
 
 ## Helping out
 
-You can help translate the addon to different languages. 
+You can help translate the addon to different languages.
 Localisation is done using [GitLocalize](https://gitlocalize.com/).
 You can start translating [here](https://gitlocalize.com/repo/4205) (you can sign-in using your GitHub account).
-If there's a language missing please don't hesitate to open a new issue. 
+If there's a language missing please don't hesitate to open a new issue.
 
 ## Issues and Suggestions
 
