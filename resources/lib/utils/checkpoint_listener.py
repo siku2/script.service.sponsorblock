@@ -8,7 +8,7 @@ from .const import VAR_PLAYER_SPEED
 
 logger = logging.getLogger(__name__)
 
-MAX_UNDERSHOOT = .25
+MAX_UNDERSHOOT = 0.25
 """Amount of tolerance in seconds for waking up early.
 
 If the listener wakes up and the difference to the checkpoint is bigger than this value, 
@@ -38,7 +38,7 @@ class PlayerCheckpointListener(xbmc.Player):
 
     def __init__(self, *args, **kwargs):
         super(PlayerCheckpointListener, self).__init__(*args, **kwargs)
-        self._playback_speed = 1.
+        self._playback_speed = 1.0
 
         self.__seek = None  # type: Optional[Tuple[float, float]]
         self.__wakeup = threading.Condition()
@@ -124,7 +124,9 @@ class PlayerCheckpointListener(xbmc.Player):
 
         overshoot = self._get_current_time() - cp
         if overshoot > MAX_OVERSHOOT:
-            logger.warning("overshot checkpoint %s by %s second(s), not skipping", cp, overshoot)
+            logger.warning(
+                "overshot checkpoint %s by %s second(s), ignoring", cp, overshoot
+            )
             self._select_next_checkpoint()
             return
 
@@ -172,14 +174,17 @@ class PlayerCheckpointListener(xbmc.Player):
 
     def start(self):  # type: () -> None
         if self._thread_running:
-            if not self._stop:
-                raise RuntimeError("checkpoint listener running and not being stopped")
-
-            logger.debug("waiting for checkpoint listener to stop before starting")
-            self._thread.join()
+            if self._stop:
+                logger.debug("waiting for previous checkpoint listener to stop")
+                self._thread.join()
+            else:
+                logger.warning("checkpoint listener already running, stopping")
+                self.stop()
 
         logger.info("starting checkpoint listener")
-        self._thread = threading.Thread(target=self.__t_event_loop, name="Checkpoint Listener")
+        self._thread = threading.Thread(
+            target=self.__t_event_loop, name="Checkpoint Listener"
+        )
         self._thread.start()
 
     def stop(self):
@@ -196,7 +201,7 @@ class PlayerCheckpointListener(xbmc.Player):
         logger.debug("listener stopped")
 
     def onPlayBackSeek(self, target, offset):  # type: (int, int) -> None
-        self._seek_time = target / 1000.
+        self._seek_time = target / 1000.0
         self._trigger_wakeup()
 
     def onPlayBackEnded(self):  # type: () -> None

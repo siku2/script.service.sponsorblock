@@ -59,7 +59,7 @@ class Monitor(xbmc.Monitor):
         api.set_api_server(addon.get_config(CONF_API_SERVER, str))
         api.set_categories(get_categories())
 
-    def __handler_playback_init(self, data):
+    def __handle_playback_init(self, data):
         try:
             video_id = data["video_id"]
         except KeyError:
@@ -88,4 +88,4 @@ class Monitor(xbmc.Monitor):
 
         logger.debug("notification from YouTube addon: %r %s", method, data)
         if method == youtube_api.NOTIFICATION_PLAYBACK_INIT:
-            self.__handler_playback_init(data)
+            self.__handle_playback_init(data)
