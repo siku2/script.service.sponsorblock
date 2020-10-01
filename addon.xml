@@ -29,7 +29,8 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
         <disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
 [0.2.1]
-- Fix "Playback fails with sponsor section at video start" (#10) 
+- Fixed "Playback fails with sponsor section at video start" (#12)
+- Added German translation (@NettoHikari, #9)
 
 [0.2.0]
 - Support for SponsorBlock categories
