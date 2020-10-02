@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -eE
 
 function exit_with_error() {
