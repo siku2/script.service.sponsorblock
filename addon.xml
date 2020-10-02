@@ -39,6 +39,15 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
 - Preload skip segments to catch sponsors at the start of a video
 - Fixed the bug which causes a video to keep playing even after the video ended
         </news>
+
+        <summary lang="de">Überspringe Sponsoren, betteln um Abonnenten und mehr in YouTube Videos</summary>
+        <description lang="de">
+SponsorBlock für Kodis YouTube Plugin.
+
+SponsorBlock ist ein Crowdsourcing-Projekt zum Überspringen von Sponsorensegmenten in YouTube Videos.
+Benutzer melden diverse Segmente die dann automatisch übersprungen werden.
+        </description>
+
         <platform>all</platform>
         <license>MIT</license>
         <source>https://github.com/siku2/script.service.sponsorblock</source>
