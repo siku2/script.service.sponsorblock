@@ -3,18 +3,26 @@ import logging
 
 import requests
 
-from .endpoints import DEFAULT_SERVER, GET_SKIP_SEGMENTS, VIEWED_VIDEO_SPONSOR_TIME, VOTE_ON_SPONSOR_TIME
+from .endpoints import (
+    DEFAULT_SERVER,
+    GET_SKIP_SEGMENTS,
+    VIEWED_VIDEO_SPONSOR_TIME,
+    VOTE_ON_SPONSOR_TIME,
+)
 from .errors import error_from_response
 from .models import SponsorSegment
 from .utils import new_user_id
 
 logger = logging.getLogger(__name__)
 
-_USER_AGENT = "kodi-sponsorblock/{version} (https://github.com/siku2/script.service.sponsorblock)"
+_USER_AGENT = (
+    "kodi-sponsorblock/{version} (https://github.com/siku2/script.service.sponsorblock)"
+)
 
 
 def get_user_agent():  # type: () -> str
     from . import __version__
+
     return _USER_AGENT.format(version=__version__)
 
 
@@ -55,9 +63,10 @@ class SponsorBlockAPI:
 
     def _request(self, method, url, params, is_json=True):
         req_cm = self._session.request(
-            method, url.format(SERVER=self._api_server),
+            method,
+            url.format(SERVER=self._api_server),
             params,
-            timeout=self._request_timeout
+            timeout=self._request_timeout,
         )
         with req_cm as resp:
             if resp.status_code != 200:
@@ -68,7 +77,9 @@ class SponsorBlockAPI:
             else:
                 return None
 
-    def get_skip_segments(self, video_id):  # type: (str, List[str]) -> List[SponsorSegment]
+    def get_skip_segments(
+        self, video_id
+    ):  # type: (str, List[str]) -> List[SponsorSegment]
         params = {
             "videoID": video_id,
             "categories": self._categories_param,
@@ -81,20 +92,32 @@ class SponsorBlockAPI:
             start, end = raw["segment"]
             # segments starting at 0.0 auto-skip the entire video due to a
             # quirk with xbmc.Player so we adjust start times accordingly here
-            if start < 0.5: start = 0.5
+            start = max(start, 0.5)
             seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
             segments.append(seg)
 
         return segments
 
-    def vote_sponsor_segment(self, segment, upvote=False):  # type: (Union[str, SponsorSegment], bool) -> None
-        self._request("POST", VOTE_ON_SPONSOR_TIME, {
-            "UUID": get_segment_uuid(segment),
-            "userID": self._user_id,
-            "type": int(upvote)
-        }, is_json=False)
+    def vote_sponsor_segment(
+        self, segment, upvote=False
+    ):  # type: (Union[str, SponsorSegment], bool) -> None
+        self._request(
+            "POST",
+            VOTE_ON_SPONSOR_TIME,
+            {
+                "UUID": get_segment_uuid(segment),
+                "userID": self._user_id,
+                "type": int(upvote),
+            },
+            is_json=False,
+        )
 
-    def viewed_sponsor_segment(self, segment):  # type: (Union[str, SponsorSegment]) -> None
-        self._request("POST", VIEWED_VIDEO_SPONSOR_TIME, {
-            "UUID": get_segment_uuid(segment),
-        }, is_json=False)
+    def viewed_sponsor_segment(
+        self, segment
+    ):  # type: (Union[str, SponsorSegment]) -> None
+        self._request(
+            "POST",
+            VIEWED_VIDEO_SPONSOR_TIME,
+            {"UUID": get_segment_uuid(segment),},
+            is_json=False,
+        )

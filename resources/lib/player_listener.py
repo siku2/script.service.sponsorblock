@@ -6,7 +6,11 @@ from .gui.sponsor_skipped import SponsorSkipped
 from .sponsorblock import NotFound, SponsorBlockAPI, SponsorSegment
 from .utils import addon
 from .utils.checkpoint_listener import PlayerCheckpointListener
-from .utils.const import CONF_AUTO_UPVOTE, CONF_SHOW_SKIPPED_DIALOG, CONF_SKIP_COUNT_TRACKING
+from .utils.const import (
+    CONF_AUTO_UPVOTE,
+    CONF_SHOW_SKIPPED_DIALOG,
+    CONF_SKIP_COUNT_TRACKING,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +31,9 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
     return True
 
 
-def get_sponsor_segments(api, video_id):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
+def get_sponsor_segments(
+    api, video_id
+):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
     try:
         segments = api.get_skip_segments(video_id)
     except NotFound:
@@ -46,8 +52,9 @@ def get_sponsor_segments(api, video_id):  # type: (SponsorBlockAPI, str) -> Opti
     return segments
 
 
-def vote_on_segment(api, seg, upvote,
-                    notify_success=True):  # type: (SponsorBlockAPI, SponsorSegment, bool, bool) -> bool
+def vote_on_segment(
+    api, seg, upvote, notify_success=True
+):  # type: (SponsorBlockAPI, SponsorSegment, bool, bool) -> bool
     try:
         api.vote_sponsor_segment(seg, upvote=upvote)
     except Exception:
@@ -117,7 +124,9 @@ class PlayerListener(PlayerCheckpointListener):
     def _select_next_checkpoint(self):
         current_time = self._get_current_time()
         logger.debug("searching for next segment after %g", current_time)
-        self._next_segment = next((seg for seg in self._segments if seg.start > current_time), None)
+        self._next_segment = next(
+            (seg for seg in self._segments if seg.start > current_time), None
+        )
 
     def _reset_next_checkpoint(self):
         self._next_segment = None
@@ -149,7 +158,7 @@ class PlayerListener(PlayerCheckpointListener):
     def _reached_checkpoint(self):
         seg = self._next_segment
         total_time = self.getTotalTime()
-        if seg.end >= total_time and total_time != 0.0:
+        if total_time and seg.end >= total_time:
             logger.debug("segment ends after end of video, skipping to next video")
             self.playnext()
         else:
