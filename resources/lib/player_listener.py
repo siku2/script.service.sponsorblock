@@ -148,7 +148,8 @@ class PlayerListener(PlayerCheckpointListener):
 
     def _reached_checkpoint(self):
         seg = self._next_segment
-        if seg.end >= self.getTotalTime():
+        total_time = self.getTotalTime()
+        if seg.end >= total_time and total_time != 0.0:
             logger.debug("segment ends after end of video, skipping to next video")
             self.playnext()
         else:
