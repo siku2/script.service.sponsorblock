@@ -78,12 +78,20 @@ class PlayerCheckpointListener(xbmc.Player):
         This is problematic for us because we rely on the current time being correct.
         This function solves this by returning the seek time instead, until the seek time is cleared again.
 
+        If `Player.getTime` raises an exception, this function returns 0.0.
+        In some cases Kodi claims no media file is playing even after `onPlayBackStarted` is triggered.
+        See issue siku2/script.service.sponsorblock#15.
+
         Returns:
             Current time in seconds.
         """
         seek_time = self._seek_time
         if seek_time is None:
-            return self.getTime()
+            try:
+                return self.getTime()
+            except Exception:
+                logger.exception("failed to get playback time, assuming 0.0")
+                return 0.0
 
         return seek_time
 
@@ -181,7 +189,11 @@ class PlayerCheckpointListener(xbmc.Player):
                 logger.warning("checkpoint listener already running, stopping")
                 self.stop()
 
-        logger.info("starting checkpoint listener")
+        if self.isPlaying():
+            logger.info("starting checkpoint listener")
+        else:
+            logger.warning("starting checkpoint listener but player isn't playing anything")
+
         self._thread = threading.Thread(
             target=self.__t_event_loop, name="Checkpoint Listener"
         )
