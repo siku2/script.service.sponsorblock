@@ -164,8 +164,10 @@ class PlayerListener(PlayerCheckpointListener):
         else:
             self.seekTime(seg.end)
 
-        if addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
-            self.__show_skipped_dialog(seg)
+            # with `playnext` there's no way for the user to "unskip" right now,
+            # so we only show the dialog if we're still in the same video.
+            if addon.get_config(CONF_SHOW_SKIPPED_DIALOG, bool):
+                self.__show_skipped_dialog(seg)
 
         if addon.get_config(CONF_SKIP_COUNT_TRACKING, bool):
             logger.debug("reporting sponsor skipped")
