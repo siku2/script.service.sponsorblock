@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.2.2" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.2.3" name="SponsorBlock" provider-name="siku2">
     <requires>
-        <import addon="xbmc.python" version="2.23.0"/>
+        <import addon="xbmc.python" version="2.26.0"/>
         <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
         <import addon="plugin.video.youtube" version="6.7.0"/>
@@ -28,6 +28,10 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
         </description>
         <disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
+[0.2.3]
+- Bumped Kodi version to 18 (Leia) to use `onAVStarted` which should hopefully fix issues
+  with segments starting right at the beginning of a video.
+
 [0.2.2]
 - Fixed "Playback fails with sponsor section at video start" again.
   Let's hope it worked this time :) (@bclindner, #14)
