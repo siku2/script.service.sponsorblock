@@ -77,6 +77,9 @@ class PlayerListener(PlayerCheckpointListener):
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
 
+        self._should_start = True
+        self._should_start_lock = threading.Lock()
+
     def preload_segments(self, video_id):
         assert not self._thread_running
 
@@ -107,18 +110,29 @@ class PlayerListener(PlayerCheckpointListener):
         return bool(self._segments)
 
     def onPlayBackStarted(self):  # type: () -> None
-        video_id = youtube_api.get_video_id()
-        if not video_id:
-            return
+        with self._should_start_lock:
+            video_id = youtube_api.get_video_id()
+            if not video_id:
+                return
 
-        if video_id == self._take_ignore_next_video_id():
-            logger.debug("ignoring video %s because it's ignored", video_id)
-            return
+            if video_id == self._take_ignore_next_video_id():
+                logger.debug("ignoring video %s because it's ignored", video_id)
+                return
 
-        if not self._prepare_segments(video_id):
-            return
+            if not self._prepare_segments(video_id):
+                return
 
-        self._next_segment = self._segments[0]
+            self._next_segment = self._segments[0]
+            self._should_start = True
+
+    def onAVStarted(self):  # type: () -> None
+        with self._should_start_lock:
+            if self._should_start:
+                self._should_start = False
+            else:
+                # `onPlayBackStarted` determined that we don't need to start
+                return
+
         self.start()
 
     def _select_next_checkpoint(self):
