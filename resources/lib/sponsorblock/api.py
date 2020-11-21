@@ -90,9 +90,6 @@ class SponsorBlockAPI:
         segments = []
         for raw in data:
             start, end = raw["segment"]
-            # segments starting at 0.0 auto-skip the entire video due to a
-            # quirk with xbmc.Player so we adjust start times accordingly here
-            start = max(start, 0.5)
             seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
             segments.append(seg)
 
