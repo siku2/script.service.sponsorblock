@@ -77,7 +77,8 @@ class PlayerListener(PlayerCheckpointListener):
         self._segments = []  # List[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
 
-        self._should_start = True
+        # set by `onPlaybackStarted` and then read (/ reset) by `onAVStarted`
+        self._should_start = False
         self._should_start_lock = threading.Lock()
 
     def preload_segments(self, video_id):
