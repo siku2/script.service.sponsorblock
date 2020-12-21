@@ -29,7 +29,7 @@ def _extract_image_url(img):  # type: (str) -> str
     if not img.startswith(_IMAGE_SCHEME):
         return img
 
-    return urlparse.unquote(img[len(_IMAGE_SCHEME):])
+    return urlparse.unquote(img[len(_IMAGE_SCHEME) :])
 
 
 DOMAIN_THUMBNAIL = "ytimg.com"
@@ -84,10 +84,11 @@ def _video_id_from_ids(unique_ids, has_context):  # type: (dict, bool) -> Option
 
 def video_id_from_list_item(has_context):  # type: (bool) -> Optional[str]
     try:
-        result = jsonrpc.execute("Player.GetItem", jsonrpc.PLAYER_VIDEO, [
-            jsonrpc.LIST_FIELD_ART,
-            jsonrpc.LIST_FIELD_UNIQUEID,
-        ])
+        result = jsonrpc.execute(
+            "Player.GetItem",
+            jsonrpc.PLAYER_VIDEO,
+            [jsonrpc.LIST_FIELD_ART, jsonrpc.LIST_FIELD_UNIQUEID,],
+        )
     except Exception:
         _logger.exception("failed to get item from JSON RPC")
         return None
@@ -143,14 +144,19 @@ def get_video_id():  # type: () -> Option[str]
     except Exception:
         return None
 
-    valid_url = path_url.scheme == SCHEME_PLUGIN and \
-                path_url.netloc == ADDON_ID and \
-                path_url.path.startswith(PATH_PLAY)
+    valid_url = (
+        path_url.scheme == SCHEME_PLUGIN
+        and path_url.netloc == ADDON_ID
+        and path_url.path.startswith(PATH_PLAY)
+    )
     if valid_url:
         query = urlparse.parse_qs(path_url.query)
         return query.get("video_id")
 
     # has_context denotes whether the current video seems to be a youtube video
     # being played outside of the YouTube add-on.
-    has_context = path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO)
+    if path_url.hostname is None:
+        has_context = False
+    else:
+        has_context = path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO)
     return video_id_from_list_item(has_context)
