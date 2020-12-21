@@ -190,7 +190,9 @@ class PlayerCheckpointListener(xbmc.Player):
         if self.isPlaying():
             logger.info("starting checkpoint listener")
         else:
-            logger.warning("starting checkpoint listener but player isn't playing anything")
+            logger.warning(
+                "starting checkpoint listener but player isn't playing anything"
+            )
 
         self._thread = threading.Thread(
             target=self.__t_event_loop, name="Checkpoint Listener"
@@ -215,6 +217,12 @@ class PlayerCheckpointListener(xbmc.Player):
         self._trigger_wakeup()
 
     def onPlayBackEnded(self):  # type: () -> None
+        self.stop()
+
+    def onPlayBackError(self):  # type: () -> None
+        self.stop()
+
+    def onPlayBackStopped(self):  # type: () -> None
         self.stop()
 
     def onPlayBackPaused(self):  # type: () -> None
