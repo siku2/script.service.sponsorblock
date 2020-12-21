@@ -47,6 +47,8 @@ def get_sponsor_segments(
         logger.warning("received empty list of sponsor segments for video %s", video_id)
         return None
 
+    segments = sorted(segments, key=lambda SponsorSegment: SponsorSegment.start)
+
     logger.debug("got segments %s", segments)
     assert _sanity_check_segments(segments)
     return segments
