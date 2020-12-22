@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> bool
     last_start = -1
     for seg in segments:  # type: SponsorSegment
-        if seg.end - seg.start <= 0.1:
+        if seg.end - seg.start <= 0.01:
             logger.error("%s: invalid start/end time", seg)
             return False
 
@@ -48,7 +48,8 @@ def get_sponsor_segments(
         return None
 
     logger.debug("got segments %s", segments)
-    assert _sanity_check_segments(segments)
+    _sanity_check_segments(segments)
+
     return segments
 
 
@@ -170,6 +171,26 @@ class PlayerListener(PlayerCheckpointListener):
 
         SponsorSkipped.display_async(unskip, report, on_expire)
 
+    def __get_segment_end_handle_overlap(self, seg):
+        """Get the end time of a segment handling overlap with following segments.
+        
+        When another segments starts within the span of the segment but isn't strictly contained in it,
+        its end time is used instead.
+        This continues until no more overlapping segments are found. 
+        """
+        end_time = seg.end
+        try:
+            start_index = self._segments.index(seg)
+            upcoming_segments = self._segments[start_index:]
+        except (IndexError, ValueError):
+            return end_time
+
+        for seg in upcoming_segments:
+            if seg.start > end_time:
+                break
+            end_time = max(end_time, seg.end)
+        return end_time
+
     def _reached_checkpoint(self):
         seg = self._next_segment
         total_time = self.getTotalTime()
@@ -177,7 +198,7 @@ class PlayerListener(PlayerCheckpointListener):
             logger.debug("segment ends after end of video, skipping to next video")
             self.playnext()
         else:
-            self.seekTime(seg.end)
+            self.seekTime(self.__get_segment_end_handle_overlap(seg))
 
             # with `playnext` there's no way for the user to "unskip" right now,
             # so we only show the dialog if we're still in the same video.
