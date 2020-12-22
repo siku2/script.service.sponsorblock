@@ -31,6 +31,26 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
     return True
 
 
+def merge_overlapping_segments(segments): # type: (Iterable[SponsorSegment]) -> Iterable[SponsorSegment]
+    mergedsegments = []
+    itersegments = iter(segments)
+    curseg = next(itersegments)
+
+    for seg in itersegments: # type: SponsorSegment
+        if seg.start - curseg.end <= 0.5:
+            logger.debug("%s: merging into previous segment", seg)
+            curseg = curseg._replace(end = seg.end)
+            logger.debug("%s: merged segment", curseg)
+        else:
+            mergedsegments.append(curseg)
+            curseg = seg
+
+    if not curseg in mergedsegments:
+        mergedsegments.append(curseg)
+
+    return mergedsegments
+
+
 def get_sponsor_segments(
     api, video_id
 ):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
@@ -48,6 +68,7 @@ def get_sponsor_segments(
         return None
 
     logger.debug("got segments %s", segments)
+    segments = merge_overlapping_segments(segments)
     _sanity_check_segments(segments)
 
     return segments
