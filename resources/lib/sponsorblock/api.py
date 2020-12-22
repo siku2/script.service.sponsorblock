@@ -93,7 +93,7 @@ class SponsorBlockAPI:
             seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
             segments.append(seg)
 
-        return segments
+        return sorted(segments, key=lambda SponsorSegment: SponsorSegment.start)
 
     def vote_sponsor_segment(
         self, segment, upvote=False
