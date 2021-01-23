@@ -8,7 +8,7 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="auto_upvote" type="boolean" label="32012" help="">
+                <setting id="auto_upvote" type="boolean" label="32012" help="32033">
                     <level>1</level>
                     <default>false</default>
                     <control type="toggle"/>
@@ -16,24 +16,24 @@
                         <dependency type="enable" setting="show_skipped_dialog">true</dependency>>
                     </dependencies>
                 </setting>
-                <setting id="ignore_unlisted" type="boolean" label="32026" help="">
+                <setting id="ignore_unlisted" type="boolean" label="32026" help="32031">
                     <level>1</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-                <setting id="skip_count_tracking" type="boolean" label="32011" help="">
+                <setting id="skip_count_tracking" type="boolean" label="32011" help="32032">
                     <level>2</level>
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
             </group>
             <group id="2" label="">
-                <setting id="video_end_time_margin_ms" type="integer" label="32028" help="">
+                <setting id="video_end_time_margin_ms" type="integer" label="32028" help="32034">
                     <level>2</level>
                     <default>1500</default>
                     <control type="edit" format="integer"/>
                 </setting>
-                <setting id="segment_chain_margin_ms" type="integer" label="32029" help="">
+                <setting id="segment_chain_margin_ms" type="integer" label="32029" help="32035">
                     <level>2</level>
                     <default>500</default>
                     <control type="edit" format="integer"/>
@@ -84,7 +84,7 @@
                 </setting>
             </group>
             <group id="4" label="32023">
-                <setting id="category_custom" type="string" label="32024" help="">
+                <setting id="category_custom" type="string" label="32024" help="32025">
                     <level>2</level>
                     <default/>
                     <constraints>
@@ -109,7 +109,6 @@
                     </control>
                 </setting>
             </group>
-
             <group id="2" label="">
                 <setting id="api_server" type="string" label="32002" help="">
                     <level>3</level>

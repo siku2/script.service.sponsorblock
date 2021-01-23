@@ -197,7 +197,7 @@ class PlayerListener(PlayerCheckpointListener):
             # for us to consider it a separate (non-chain) segment.
             if seg.start > (end_time + segment_chain_margin):
                 break
-            logger.debug("chaining segment because it overlaps (possibly with margin setting): %s", seg)
+            logger.debug("chaining overlapping segments (possibly with margin setting): %s", seg)
             end_time = max(end_time, seg.end)
 
         return end_time

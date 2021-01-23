@@ -19,28 +19,48 @@ msgctxt "#32006"
 msgid "Show dialog after ad skip"
 msgstr ""
 
-msgctxt "#32020"
-msgid "Categories"
+msgctxt "#32030"
+msgid "The dialog allows you to unskip a segment or report it if it's invalid"
 msgstr ""
 
 msgctxt "#32026"
 msgid "Ignore unlisted videos"
 msgstr ""
 
+msgctxt "#32031"
+msgid "Avoid leaking the video id of a private video"
+msgstr ""
+
 msgctxt "#32011"
 msgid "Enable Sponsor Skip Count Tracking"
+msgstr ""
+
+msgctxt "#32032"
+msgid "Report each skipped segment to the SponsorBlock server"
 msgstr ""
 
 msgctxt "#32012"
 msgid "Auto Upvote"
 msgstr ""
 
+msgctxt "#32033"
+msgid "Automatically upvote a segment after skipping it"
+msgstr ""
+
 msgctxt "#32028"
 msgid "Video end time margin (ms)"
 msgstr ""
 
+msgctxt "#32034"
+msgid "If a segment ends less than this amount before the end of the video, the video is considered over"
+msgstr ""
+
 msgctxt "#32029"
 msgid "Segment chain margin (ms)"
+msgstr ""
+
+msgctxt "#32035"
+msgid "If the time between two segments is smaller than this value, they are chained together and skipped as one"
 msgstr ""
 
 
@@ -78,6 +98,10 @@ msgctxt "#32010"
 msgid "report"
 msgstr ""
 
+
+msgctxt "#32020"
+msgid "Categories"
+msgstr ""
 
 msgctxt "#32013"
 msgid "Sponsor"
