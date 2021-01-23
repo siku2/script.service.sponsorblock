@@ -8,7 +8,6 @@
                     <default>true</default>
                     <control type="toggle"/>
                 </setting>
-
                 <setting id="auto_upvote" type="boolean" label="32012" help="">
                     <level>1</level>
                     <default>false</default>
@@ -17,17 +16,27 @@
                         <dependency type="enable" setting="show_skipped_dialog">true</dependency>>
                     </dependencies>
                 </setting>
-
                 <setting id="ignore_unlisted" type="boolean" label="32026" help="">
                     <level>1</level>
                     <default>false</default>
                     <control type="toggle"/>
                 </setting>
-
                 <setting id="skip_count_tracking" type="boolean" label="32011" help="">
                     <level>2</level>
                     <default>true</default>
                     <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="2" label="">
+                <setting id="video_end_time_margin_ms" type="integer" label="32028" help="">
+                    <level>2</level>
+                    <default>1500</default>
+                    <control type="edit" format="integer"/>
+                </setting>
+                <setting id="segment_chain_margin_ms" type="integer" label="32029" help="">
+                    <level>2</level>
+                    <default>500</default>
+                    <control type="edit" format="integer"/>
                 </setting>
             </group>
         </category>

@@ -35,6 +35,14 @@ msgctxt "#32012"
 msgid "Auto Upvote"
 msgstr ""
 
+msgctxt "#32028"
+msgid "Video end time margin (ms)"
+msgstr ""
+
+msgctxt "#32029"
+msgid "Segment chain margin (ms)"
+msgstr ""
+
 
 msgctxt "#32007"
 msgid "API"

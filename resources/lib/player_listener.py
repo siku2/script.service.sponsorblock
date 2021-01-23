@@ -8,8 +8,10 @@ from .utils import addon
 from .utils.checkpoint_listener import PlayerCheckpointListener
 from .utils.const import (
     CONF_AUTO_UPVOTE,
+    CONF_SEGMENT_CHAIN_MARGIN_MS,
     CONF_SHOW_SKIPPED_DIALOG,
     CONF_SKIP_COUNT_TRACKING,
+    CONF_VIDEO_END_TIME_MARGIN_MS,
 )
 
 logger = logging.getLogger(__name__)
@@ -173,32 +175,53 @@ class PlayerListener(PlayerCheckpointListener):
 
     def __get_segment_end_handle_overlap(self, seg):
         """Get the end time of a segment handling overlap with following segments.
-        
+
         When another segments starts within the span of the segment but isn't strictly contained in it,
         its end time is used instead.
-        This continues until no more overlapping segments are found. 
+        This continues until no more overlapping segments are found.
         """
         end_time = seg.end
+
         try:
             start_index = self._segments.index(seg)
             upcoming_segments = self._segments[start_index:]
         except (IndexError, ValueError):
             return end_time
 
+        segment_chain_margin = (
+            addon.get_config(CONF_SEGMENT_CHAIN_MARGIN_MS, int) / 1000.0
+        )
+
         for seg in upcoming_segments:
-            if seg.start > end_time:
+            # segment start must be bigger than our current `end_time + segment_chain_margin`
+            # for us to consider it a separate (non-chain) segment.
+            if seg.start > (end_time + segment_chain_margin):
                 break
+            logger.debug("chaining segment because it overlaps (possibly with margin setting): %s", seg)
             end_time = max(end_time, seg.end)
+
         return end_time
+
+    def __check_exceeds_video_end(self, time):
+        total_time = self.getTotalTime()
+        if not total_time:
+            logger.warning("couldn't determine total duration of the current video")
+            return False
+
+        video_end_time = (
+            total_time - addon.get_config(CONF_VIDEO_END_TIME_MARGIN_MS, int) / 1000.0
+        )
+        return time >= video_end_time
 
     def _reached_checkpoint(self):
         seg = self._next_segment
-        total_time = self.getTotalTime()
-        if total_time and seg.end >= total_time:
-            logger.debug("segment ends after end of video, skipping to next video")
+        seg_target_seek_time = self.__get_segment_end_handle_overlap(seg)
+
+        if self.__check_exceeds_video_end(seg_target_seek_time):
+            logger.info("segment ends after end of video, skipping to next video")
             self.playnext()
         else:
-            self.seekTime(self.__get_segment_end_handle_overlap(seg))
+            self.seekTime(seg_target_seek_time)
 
             # with `playnext` there's no way for the user to "unskip" right now,
             # so we only show the dialog if we're still in the same video.
