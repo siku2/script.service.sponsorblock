@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.2.6" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.3.0" name="SponsorBlock" provider-name="siku2">
     <requires>
         <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
@@ -27,36 +27,7 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
         </description>
         <disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
-[0.2.6]
-- Chained segments no longer skip past the end of a video
-- Configurable time margins for segment chaining and video end time
-
-[0.2.5]
-- Sort received segments by start time (macearl, #18)
-- Skip all overlapping segments instead of just skipping the first one
-
-[0.2.4]
-- Handle all events which indicate that playback has ended
-- Handle local files gracefully
-
-[0.2.3]
-- Bumped Kodi version to 18 (Leia) to use `onAVStarted` which should hopefully fix issues
-  with segments starting right at the beginning of a video.
-
-[0.2.2]
-- Fixed "Playback fails with sponsor section at video start" again.
-  Let's hope it worked this time :) (bclindner, #14)
-
-[0.2.1]
-- Fixed "Playback fails with sponsor section at video start" (#12)
-- Added German translation (NettoHikari, #9)
-
-[0.2.0]
-- Support for SponsorBlock categories
-- Option to disable SponsorBlock for unlisted videos.
-- Added context menu entry to the YouTube plugin for SponsorBlock
-- Preload skip segments to catch sponsors at the start of a video
-- Fixed the bug which causes a video to keep playing even after the video ended
+Support for Kodi 19 "Matrix"
         </news>
 
         <summary lang="de">Überspringe Sponsoren, betteln um Abonnenten und mehr in YouTube Videos</summary>
