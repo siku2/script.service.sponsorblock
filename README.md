@@ -4,7 +4,7 @@
 [![gitlocalized](https://gitlocalize.com/repo/4205/whole_project/badge.svg)](https://gitlocalize.com/repo/4205)
 
 This is an **unofficial** port of the [SponsorBlock](https://sponsor.ajay.app/) browser extension.
-It works as an extension to the [YouTube Plugin](https://github.com/jdf76/plugin.video.youtube).
+It works as an extension to the [YouTube Plugin](https://github.com/anxdpanic/plugin.video.youtube).
 
 Once installed, the add-on will automatically skip sponsor segments in all YouTube videos you watch.
 
