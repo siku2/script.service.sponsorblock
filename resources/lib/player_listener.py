@@ -1,6 +1,8 @@
 import logging
 import threading
 
+import xbmc
+
 from . import youtube_api
 from .gui.sponsor_skipped import SponsorSkipped
 from .sponsorblock import NotFound, SponsorBlockAPI, SponsorSegment
@@ -137,7 +139,7 @@ class PlayerListener(PlayerCheckpointListener):
                 # `onPlayBackStarted` determined that we don't need to start
                 return
 
-        self.start()
+        self.start_listener()
 
     def _select_next_checkpoint(self):
         current_time = self._get_current_time()
@@ -197,7 +199,9 @@ class PlayerListener(PlayerCheckpointListener):
             # for us to consider it a separate (non-chain) segment.
             if seg.start > (end_time + segment_chain_margin):
                 break
-            logger.debug("chaining overlapping segments (possibly with margin setting): %s", seg)
+            logger.debug(
+                "chaining overlapping segments (possibly with margin setting): %s", seg
+            )
             end_time = max(end_time, seg.end)
 
         return end_time
@@ -213,13 +217,29 @@ class PlayerListener(PlayerCheckpointListener):
         )
         return time >= video_end_time
 
+    def __playnext_or_stop(self):
+        try:
+            playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
+            last_item = playlist.getposition() + 1 == playlist.size()
+        except Exception:
+            logger.exception(
+                "failed to determine whether this is the last item in the playlist"
+            )
+            last_item = False
+
+        if last_item:
+            logger.debug("stopping because this is the last item in the playlist")
+            self.stop()
+        else:
+            self.playnext()
+
     def _reached_checkpoint(self):
         seg = self._next_segment
         seg_target_seek_time = self.__get_segment_end_handle_overlap(seg)
 
         if self.__check_exceeds_video_end(seg_target_seek_time):
             logger.info("segment ends after end of video, skipping to next video")
-            self.playnext()
+            self.__playnext_or_stop()
         else:
             self.seekTime(seg_target_seek_time)
 
