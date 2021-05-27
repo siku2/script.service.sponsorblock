@@ -52,7 +52,7 @@ def _video_id_from_art(art, has_context):  # type: (dict, bool) -> Optional[str]
         _logger.debug("thumbnail isn't a URL: %r", thumb_path)
         return None
 
-    if DOMAIN_THUMBNAIL not in thumb_url.hostname:
+    if thumb_url.hostname is None or DOMAIN_THUMBNAIL not in thumb_url.hostname:
         return
 
     parts = thumb_url.path.split("/", 3)
@@ -87,7 +87,10 @@ def video_id_from_list_item(has_context):  # type: (bool) -> Optional[str]
         result = jsonrpc.execute(
             "Player.GetItem",
             jsonrpc.PLAYER_VIDEO,
-            [jsonrpc.LIST_FIELD_ART, jsonrpc.LIST_FIELD_UNIQUEID,],
+            [
+                jsonrpc.LIST_FIELD_ART,
+                jsonrpc.LIST_FIELD_UNIQUEID,
+            ],
         )
     except Exception:
         _logger.exception("failed to get item from JSON RPC")
@@ -159,4 +162,8 @@ def get_video_id():  # type: () -> Option[str]
         has_context = False
     else:
         has_context = path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO)
-    return video_id_from_list_item(has_context)
+    try:
+        return video_id_from_list_item(has_context)
+    except Exception:
+        _logger.exception("failed to get video id from list item")
+        return None
