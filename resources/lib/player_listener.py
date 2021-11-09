@@ -142,7 +142,7 @@ class PlayerListener(PlayerCheckpointListener):
         self.start_listener()
 
     def _select_next_checkpoint(self):
-        current_time = self._get_current_time()
+        current_time = self.getTime()
         logger.debug("searching for next segment after %g", current_time)
         self._next_segment = next(
             (seg for seg in self._segments if seg.start > current_time), None
