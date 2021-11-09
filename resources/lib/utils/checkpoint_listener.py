@@ -47,56 +47,10 @@ class PlayerCheckpointListener(xbmc.Player):
         self._thread = None  # Optional[threading.Thread]
         self._stop = False
 
-    @property
-    def _seek_time(self):  # type: () -> Optional[float]
-        try:
-            seek_time, timestamp = self.__seek
-        except TypeError:
-            return None
-
-        age = time.time() - timestamp
-        if age > MAX_SEEK_AGE:
-            logger.debug("seek time expired")
-            self.__seek = None
-            return None
-
-        logger.debug("estimating time based on recent seek")
-        return seek_time + age * self._playback_speed
-
-    @_seek_time.setter
-    def _seek_time(self, value):  # type: (float) -> None
-        if value is None:
-            self.__seek = None
-        else:
-            self.__seek = (value, time.time())
-
-    def _get_current_time(self):  # type:() -> float
-        """Get the current time of the current item.
-
-        This method is the same as `Player.getTime` unless it is called just after seeking.
-        For a period after seeking `Player.getTime` still reports the time prior to seeking.
-        This is problematic for us because we rely on the current time being correct.
-        This function solves this by returning the seek time instead, until the seek time is cleared again.
-
-        If `Player.getTime` raises an exception, this function returns 0.0.
-
-        Returns:
-            Current time in seconds.
-        """
-        seek_time = self._seek_time
-        if seek_time is None:
-            try:
-                return self.getTime()
-            except RuntimeError:
-                logger.exception("failed to get playback time, assuming 0.0")
-                return 0.0
-
-        return seek_time
-
     def __sleep_until(self, target_time):  # type: (float) -> bool
         logger.debug("waiting until %s (or until woken)", target_time)
         while not (self.__wakeup_triggered or self._stop):
-            wait_for = (target_time - self._get_current_time()) / self._playback_speed
+            wait_for = (target_time - self.getTime()) / self._playback_speed
             if wait_for <= MAX_UNDERSHOOT:
                 return True
 
@@ -143,14 +97,25 @@ class PlayerCheckpointListener(xbmc.Player):
 
         self._reset_next_checkpoint()
 
+    def __t_wait_for_seek_to_finish(self):
+        with self.__wakeup:
+            wait_for = 0.5
+            logger.debug("sleeping for %s second(s) until seek is finished", wait_for)
+            self.__wakeup.wait(wait_for)
+
+
     def __t_event_loop(self):
         self._playback_speed = float(xbmc.getInfoLabel(VAR_PLAYER_SPEED))
 
         self._stop = False
-        self._seek_time = None
+        self.wait_for_seek_to_complete_first = False
         self.__wakeup_triggered = False
 
         while not self._stop:
+            if self.wait_for_seek_to_complete_first:
+                self.wait_for_seek_to_complete_first = False
+                self.__t_wait_for_seek_to_finish()
+
             cp_reached = self.__idle()
             self.__wakeup_triggered = False
             if self._stop:
@@ -213,7 +178,11 @@ class PlayerCheckpointListener(xbmc.Player):
         logger.debug("listener stopped")
 
     def onPlayBackSeek(self, target, offset):  # type: (int, int) -> None
-        self._seek_time = target / 1000.0
+        # "target" variable in this method is not reliable. It represents the target that kodi wants to seek to, 
+        # but actual seek time can be several seconds behind or late due to keyframes
+        # instead of using this time, wait some time and then use getTime() to get accurate post-seek position
+
+        self.wait_for_seek_to_complete_first = True
         self._trigger_wakeup()
 
     def onPlayBackEnded(self):  # type: () -> None
@@ -226,14 +195,12 @@ class PlayerCheckpointListener(xbmc.Player):
         self.stop_listener()
 
     def onPlayBackPaused(self):  # type: () -> None
-        self._seek_time = None
         self._trigger_wakeup()
 
     def onPlayBackResumed(self):  # type: () -> None
         self._trigger_wakeup()
 
     def onPlayBackSpeedChanged(self, speed):  # type: (int) -> None
-        self._seek_time = None
         self._playback_speed = float(speed)
         self._trigger_wakeup()
 
@@ -241,7 +208,6 @@ class PlayerCheckpointListener(xbmc.Player):
         """Select the next checkpoint.
 
         Choose the next checkpoint strictly AFTER the current time.
-        You should use `_get_current_time` instead of `getTime` to get the current time.
         """
         raise NotImplementedError
 
