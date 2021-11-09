@@ -82,7 +82,7 @@ class PlayerCheckpointListener(xbmc.Player):
             self._select_next_checkpoint()
             return
 
-        overshoot = self._get_current_time() - cp
+        overshoot = self.getTime() - cp
         if overshoot > MAX_OVERSHOOT:
             logger.warning(
                 "overshot checkpoint %s by %s second(s), ignoring", cp, overshoot
