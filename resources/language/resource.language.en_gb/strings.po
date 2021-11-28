@@ -63,6 +63,14 @@ msgctxt "#32035"
 msgid "If the time between two segments is smaller than this value, they are chained together and skipped as one"
 msgstr ""
 
+msgctxt "#32040"
+msgid "Reduce all skips by this much (ms)"
+msgstr ""
+
+msgctxt "#32041"
+msgid "Sometimes player may skip too much and cut off the content after sponsor. Use this option to end skips sooner than they should. This may cause tail end of the sponsor to still play, but you will not miss any actual content."
+msgstr ""
+
 
 msgctxt "#32007"
 msgid "API"

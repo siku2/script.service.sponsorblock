@@ -11,6 +11,7 @@ from .utils.checkpoint_listener import PlayerCheckpointListener
 from .utils.const import (
     CONF_AUTO_UPVOTE,
     CONF_SEGMENT_CHAIN_MARGIN_MS,
+    CONF_REDUCE_SKIPS_MS,
     CONF_SHOW_SKIPPED_DIALOG,
     CONF_SKIP_COUNT_TRACKING,
     CONF_VIDEO_END_TIME_MARGIN_MS,
@@ -241,7 +242,10 @@ class PlayerListener(PlayerCheckpointListener):
             logger.info("segment ends after end of video, skipping to next video")
             self.__playnext_or_stop()
         else:
-            self.seekTime(seg_target_seek_time)
+            reduce_skips_seconds = (
+                addon.get_config(CONF_REDUCE_SKIPS_MS, int) / 1000.0
+            )
+            self.seekTime(seg_target_seek_time - reduce_skips_seconds)
 
             # with `playnext` there's no way for the user to "unskip" right now,
             # so we only show the dialog if we're still in the same video.
