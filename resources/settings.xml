@@ -38,6 +38,11 @@
                     <default>500</default>
                     <control type="edit" format="integer"/>
                 </setting>
+                <setting id="reduce_skips_ms" type="integer" label="32040" help="32041">
+                    <level>2</level>
+                    <default>0</default>
+                    <control type="edit" format="integer"/>
+                </setting>
             </group>
         </category>
 
