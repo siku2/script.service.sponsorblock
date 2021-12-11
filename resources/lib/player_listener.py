@@ -129,7 +129,7 @@ class PlayerListener(PlayerCheckpointListener):
             if not self._prepare_segments(video_id):
                 return
 
-            self._next_segment = self._segments[0]
+            self._select_next_checkpoint()
             self._should_start = True
 
     def onAVStarted(self):  # type: () -> None
@@ -143,11 +143,33 @@ class PlayerListener(PlayerCheckpointListener):
         self.start_listener()
 
     def _select_next_checkpoint(self):
+        reduce_skips_seconds = (
+            addon.get_config(CONF_REDUCE_SKIPS_MS, int) / 1000.0
+        )
+
         current_time = self.getTime()
         logger.debug("searching for next segment after %g", current_time)
         self._next_segment = next(
-            (seg for seg in self._segments if seg.start > current_time), None
+            (seg for seg in self._segments if self._is_segment_skippable(seg, current_time, reduce_skips_seconds)), None
         )
+    
+    def _is_segment_skippable(self, seg, current_time, reduce_skips_seconds):
+        if seg.start < current_time:
+            return False
+
+        chained_end = self.__get_segment_end_handle_overlap(seg)
+        min_skip_position = current_time + reduce_skips_seconds 
+
+        if chained_end < min_skip_position:
+            logger.debug("skipping segment %s because there is not enough margin for 'Reduce all skips by this much' setting (%g)", seg, reduce_skips_seconds)
+            return False
+
+        if chained_end - seg.start < reduce_skips_seconds:
+            logger.debug("skipping segment %s because it is shorter than 'Reduce all skips by this much' setting (%g)", seg, reduce_skips_seconds)
+            return False
+
+        return True
+
 
     def _reset_next_checkpoint(self):
         self._next_segment = None
