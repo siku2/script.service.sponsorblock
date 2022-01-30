@@ -117,6 +117,11 @@ class PlayerListener(PlayerCheckpointListener):
         return bool(self._segments)
 
     def onPlayBackStarted(self):  # type: () -> None
+        # Reset existing playback
+        self._reset_next_checkpoint()
+        self._segments = []
+        self._segments_video_id = None
+
         with self._should_start_lock:
             video_id = youtube_api.get_video_id()
             if not video_id:
