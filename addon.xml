@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.3.1" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.4.0" name="SponsorBlock" provider-name="siku2">
     <requires>
         <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
@@ -27,8 +27,10 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
         </description>
         <disclaimer lang="en_GB">This is an unoffical port of the SponsorBlock browser extension</disclaimer>
         <news>
-- Fix an issue with the YouTube thumbnail URL detection (issue #26)
-- No longer try to play the next item in the playlist if it's the last one (issue #22)
+- Get current player's time after a delay instead of relying on seek target (#28)
+- Add option to reduce all skips by some time (#30)
+- Ignore segments that do not fit into reduce skips setting (#31)
+- Reset existing playback when new video starts playing (#32)
         </news>
 
         <summary lang="de">Überspringe Sponsoren, betteln um Abonnenten und mehr in YouTube Videos</summary>
