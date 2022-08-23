@@ -1,0 +1,173 @@
+# Kodi Media Center language file
+# Addon Name: SponsorBlock
+# Addon id: script.service.sponsorblock
+# Addon Provider: siku2
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+msgctxt "#32001"
+msgid "General"
+msgstr "Général"
+
+msgctxt "#32006"
+msgid "Show dialog after ad skip"
+msgstr "Afficher le dialogue après le saut de la publicité"
+
+msgctxt "#32030"
+msgid "The dialog allows you to unskip a segment or report it if it's invalid"
+msgstr "La boîte de dialogue vous permet d'annuler un segment ou de le signaler s'il est invalide"
+
+msgctxt "#32026"
+msgid "Ignore unlisted videos"
+msgstr "Ignorer les vidéos non répertoriées"
+
+msgctxt "#32031"
+msgid "Avoid leaking the video id of a private video"
+msgstr "Évite de divulguer l'identifiant vidéo d'une vidéo privée"
+
+msgctxt "#32011"
+msgid "Enable Sponsor Skip Count Tracking"
+msgstr "Activer le suivi du nombre de sauts du sponsor"
+
+msgctxt "#32032"
+msgid "Report each skipped segment to the SponsorBlock server"
+msgstr "Rapporter chaque segment sauté au serveur SponsorBlock
+"
+
+msgctxt "#32012"
+msgid "Auto Upvote"
+msgstr "Vote positif automatique"
+
+msgctxt "#32033"
+msgid "Automatically upvote a segment after skipping it"
+msgstr "Met automatiquement un vote positif à un segment après l'avoir sauté
+"
+
+msgctxt "#32028"
+msgid "Video end time margin (ms)"
+msgstr "Marge de temps de fin de vidéo (ms)"
+
+msgctxt "#32034"
+msgid "If a segment ends less than this amount before the end of the video, the video is considered over"
+msgstr "Si un segment se termine moins que ce montant avant la fin de la vidéo, la vidéo est considérée comme terminée
+"
+
+msgctxt "#32029"
+msgid "Segment chain margin (ms)"
+msgstr "Marge de la chaîne de segments (ms)"
+
+msgctxt "#32035"
+msgid "If the time between two segments is smaller than this value, they are chained together and skipped as one"
+msgstr "Si le temps entre deux segments est inférieur à cette valeur, ils sont enchaînés et sautés comme un seul"
+
+msgctxt "#32040"
+msgid "Reduce all skips by this much (ms)"
+msgstr "Réduire tous les sauts de tant (ms)"
+
+msgctxt "#32041"
+msgid "Sometimes player may skip too much and cut off the content after sponsor. Use this option to end skips sooner than they should. This may cause tail end of the sponsor to still play, but you will not miss any actual content."
+msgstr "Parfois, le lecteur peut sauter trop loin et couper le contenu après le sponsor. Utilisez cette option pour mettre fin aux sauts plus tôt qu'ils ne le devraient. Cela peut entraîner la poursuite de la lecture de la fin du sponsor, mais vous ne manquerez aucun contenu réel"
+
+
+msgctxt "#32007"
+msgid "API"
+msgstr "API"
+
+msgctxt "#32002"
+msgid "Server Domain"
+msgstr "Domaine du serveur"
+
+msgctxt "#32003"
+msgid "User ID"
+msgstr "ID utilisateur"
+
+
+msgctxt "#32004"
+msgid "Failed to submit vote"
+msgstr "Échec de l'envoi du vote"
+
+msgctxt "#32005"
+msgid "Submitted vote"
+msgstr "Vote soumis
+"
+
+
+msgctxt "#32008"
+msgid "Skipped sponsor segment"
+msgstr "Segment du sponsor sauté"
+
+msgctxt "#32009"
+msgid "unskip"
+msgstr "annuler"
+
+msgctxt "#32010"
+msgid "report"
+msgstr "reporter"
+
+
+msgctxt "#32020"
+msgid "Categories"
+msgstr "Catégories"
+
+msgctxt "#32013"
+msgid "Sponsor"
+msgstr "Sponsor"
+
+msgctxt "#32014"
+msgid "Intro"
+msgstr "Introduction"
+
+msgctxt "#32015"
+msgid "Endcards/Credits"
+msgstr "Cartes de fin/crédits"
+
+msgctxt "#32016"
+msgid "Interaction Reminder (Subscribe)"
+msgstr "Rappel d'interaction (S'abonner)"
+
+msgctxt "#32017"
+msgid "Self-Promotion and Merchandise"
+msgstr "Autopromotions et marchandises"
+
+
+msgctxt "#32022"
+msgid "Music"
+msgstr "Musique"
+
+msgctxt "#32018"
+msgid "Non-Music Section"
+msgstr "Section non-musicale"
+
+
+msgctxt "#32021"
+msgid "Livestream"
+msgstr "Diffusion en direct"
+
+msgctxt "#32019"
+msgid "Donation/Message Readings"
+msgstr "Dons/Lectures de messages"
+
+
+msgctxt "#32023"
+msgid "Custom"
+msgstr "Personnalisé"
+
+msgctxt "#32024"
+msgid "Custom Categories"
+msgstr "Catégories personnalisées"
+
+msgctxt "#32025"
+msgid "Comma-separated list of categories"
+msgstr "Liste de catégories séparées par des virgules
+"
+
+
+msgctxt "#32027"
+msgid "SponsorBlock Settings"
+msgstr "Paramètres de SponsorBlock"
