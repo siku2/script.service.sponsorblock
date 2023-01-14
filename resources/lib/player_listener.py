@@ -147,12 +147,12 @@ class PlayerListener(PlayerCheckpointListener):
 
         self.start_listener()
 
-    def _select_next_checkpoint(self):
+    def _select_next_checkpoint(self, playback_started: bool = False):
         reduce_skips_seconds = (
             addon.get_config(CONF_REDUCE_SKIPS_MS, int) / 1000.0
         )
 
-        current_time = self.getTime()
+        current_time = 0 if playback_started else self.getTime()
         logger.debug("searching for next segment after %g", current_time)
         self._next_segment = next(
             (seg for seg in self._segments if self._is_segment_skippable(seg, current_time, reduce_skips_seconds)), None
