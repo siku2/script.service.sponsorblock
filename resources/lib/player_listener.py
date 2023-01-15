@@ -134,7 +134,7 @@ class PlayerListener(PlayerCheckpointListener):
             if not self._prepare_segments(video_id):
                 return
 
-            self._select_next_checkpoint()
+            self._select_next_checkpoint(playback_started=True)
             self._should_start = True
 
     def onAVStarted(self):  # type: () -> None
