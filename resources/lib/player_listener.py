@@ -152,18 +152,26 @@ class PlayerListener(PlayerCheckpointListener):
             addon.get_config(CONF_REDUCE_SKIPS_MS, int) / 1000.0
         )
 
-        current_time = 0 if playback_started else self.getTime()
+        current_time = self.getTime()
         logger.debug("searching for next segment after %g", current_time)
-        self._next_segment = next(
-            (seg for seg in self._segments if self._is_segment_skippable(seg, current_time, reduce_skips_seconds)), None
+        self._next_segment = next((
+            seg for seg in self._segments
+            if self._is_segment_skippable(seg, current_time, reduce_skips_seconds, playback_started)),
+            None
         )
-    
-    def _is_segment_skippable(self, seg, current_time, reduce_skips_seconds):
-        if seg.start < current_time:
+
+    def _is_segment_skippable(self, seg, current_time, reduce_skips_seconds, playback_started: bool):
+        if seg.end < current_time:
+            return False  # this segment is already in the past
+
+        if (not playback_started) and seg.start < current_time:
+            # we're already in this segment
+            # If playback just started, we want to skip the segment anyway, but otherwise
+            # this means the user manually went back into the segment.
             return False
 
         chained_end = self.__get_segment_end_handle_overlap(seg)
-        min_skip_position = current_time + reduce_skips_seconds 
+        min_skip_position = current_time + reduce_skips_seconds
 
         if chained_end < min_skip_position:
             logger.debug("skipping segment %s because there is not enough margin for 'Reduce all skips by this much' setting (%g)", seg, reduce_skips_seconds)
@@ -174,7 +182,6 @@ class PlayerListener(PlayerCheckpointListener):
             return False
 
         return True
-
 
     def _reset_next_checkpoint(self):
         self._next_segment = None
