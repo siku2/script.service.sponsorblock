@@ -65,12 +65,13 @@ function reinstall_addon() {
 function start_kodi() {
   echo "starting kodi"
 
-  if [[ -z $FLATPAK ]]
+  if [[ $FLATPAK ]]
   then
-    kodi &>/dev/null &
-  else
     flatpak run tv.kodi.Kodi
+    return
   fi
+
+  kodi &>/dev/null &
 }
 
 function tail_log() {
