@@ -1,4 +1,5 @@
 CONF_API_SERVER = "api_server"
+CONF_EXTRA_PRIVACY = "extra_privacy"
 CONF_AUTO_UPVOTE = "auto_upvote"
 CONF_IGNORE_UNLISTED = "ignore_unlisted"
 CONF_SEGMENT_CHAIN_MARGIN_MS = "segment_chain_margin_ms"
