@@ -38,7 +38,7 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
 
 def get_sponsor_segments(
     api, video_id
-):  # type: (SponsorBlockAPI, str) -> Optional[List[SponsorSegment]]
+):  # type: (SponsorBlockAPI, str) -> Optional[list[SponsorSegment]]
     try:
         segments = api.get_skip_segments(video_id)
     except NotFound:
@@ -80,7 +80,7 @@ class PlayerListener(PlayerCheckpointListener):
         self._load_segment_lock = threading.Lock()
         self._ignore_next_video_id = None
         self._segments_video_id = None
-        self._segments = []  # List[SponsorSegment]
+        self._segments = []  # list[SponsorSegment]
         self._next_segment = None  # type: Optional[SponsorSegment]
 
         # set by `onPlaybackStarted` and then read (/ reset) by `onAVStarted`
