@@ -7,8 +7,14 @@ function exit_with_error() {
 }
 
 KODI_PATH="$HOME/.kodi"
+
 if [[ ! -d $KODI_PATH ]]; then
-  exit_with_error "kodi not found at $KODI_PATH"
+  KODI_PATH="$HOME/.var/app/tv.kodi.Kodi/data"
+  FLATPAK=1
+fi
+
+if [[ ! -d $KODI_PATH ]]; then
+  exit_with_error "kodi not found"
 fi
 
 if [[ ! -f addon.xml ]]; then
@@ -58,7 +64,13 @@ function reinstall_addon() {
 
 function start_kodi() {
   echo "starting kodi"
-  kodi &>/dev/null &
+
+  if [[ -z $FLATPAK ]]
+  then
+    kodi &>/dev/null &
+  else
+    flatpak run tv.kodi.Kodi
+  fi
 }
 
 function tail_log() {
