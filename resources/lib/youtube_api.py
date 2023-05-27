@@ -1,4 +1,4 @@
-"""Module for accessing data from the youtube plugin."""
+"""Module for accessing data from the YouTube plugin."""
 
 import itertools
 import json
@@ -12,7 +12,26 @@ from .utils.const import VAR_PLAYER_FILE_AND_PATH
 
 _logger = logging.getLogger(__name__)
 
-ADDON_ID = "plugin.video.youtube"
+URI_FILTERS = {
+    "plugin.video.youtube": {
+        "scheme": "plugin",
+        "pathPrefix": "/play",
+        "query": "video_id"
+    },
+    "plugin.video.invidious": {
+        "scheme": "plugin",
+        "pathPrefix": "/",
+        "query": "videoId"
+    }
+}
+"""
+Mapping of addon ID to URI filter to match respective supported videos.
+
+Based on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/events/UrlFilter
+"""
+
+ADDON_IDS = URI_FILTERS.keys()
+
 
 NOTIFICATION_PLAYBACK_INIT = "Other.PlaybackInit"
 
@@ -63,11 +82,14 @@ def _video_id_from_art(art, has_context):  # type: (dict, bool) -> Optional[str]
     return parts[2]
 
 
-# unique ids that explicitly identify a youtube video.
 _EXPLICIT_UIDS = ("youtubeid", "youtube_id")
-# unique ids that require context
+"""
+unique ids that explicitly identify a youtube video.
+"""
 _CONTEXT_UIDS = ("videoid", "video_id")
-
+"""
+unique ids that require context
+"""
 
 def _video_id_from_ids(unique_ids, has_context):  # type: (dict, bool) -> Optional[str]
     if has_context:
@@ -127,9 +149,6 @@ def get_playing_file_path():  # type: () -> str
     return xbmc.getInfoLabel(VAR_PLAYER_FILE_AND_PATH)
 
 
-SCHEME_PLUGIN = "plugin"
-PATH_PLAY = "/play"
-
 DOMAIN_GOOGLEVIDEO = "googlevideo.com"
 
 
@@ -147,14 +166,16 @@ def get_video_id():  # type: () -> Option[str]
     except Exception:
         return None
 
+    addon_id = path_url.netloc
+    uri_filter = URI_FILTERS[addon_id]
+
     valid_url = (
-        path_url.scheme == SCHEME_PLUGIN
-        and path_url.netloc == ADDON_ID
-        and path_url.path.startswith(PATH_PLAY)
+        path_url.scheme == uri_filter["scheme"]
+        and path_url.path.startswith(uri_filter["pathPrefix"])
     )
     if valid_url:
         query = urlparse.parse_qs(path_url.query)
-        return query.get("video_id")
+        return query.get(uri_filter["query"])
 
     # has_context denotes whether the current video seems to be a youtube video
     # being played outside of the YouTube add-on.

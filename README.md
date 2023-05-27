@@ -6,9 +6,9 @@
 This is an **unofficial** port of the [SponsorBlock](https://sponsor.ajay.app/) browser extension.
 It works as an extension to the [YouTube Plugin](https://github.com/anxdpanic/plugin.video.youtube).
 
-Once installed, the add-on will automatically skip sponsor segments in all YouTube videos you watch.
+Once installed, the add-on will automatically skip sponsor segments in all YouTube and Invidious videos you watch.
 
-For a detailed explanation of how SponsorSkip works please visit the [offical website](https://sponsor.ajay.app/).
+For a detailed explanation of how SponsorBlock works please visit the [offical website](https://sponsor.ajay.app/).
 
 ## Installation
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.service.sponsorblock" version="0.4.0" name="SponsorBlock" provider-name="siku2">
+<addon id="script.service.sponsorblock" version="0.5.0" name="SponsorBlock" provider-name="siku2">
     <requires>
         <import addon="script.module.requests" version="2.15.1"/>
         <import addon="script.module.six" version="1.13.0"/>
-        <import addon="plugin.video.youtube" version="6.7.0"/>
+        <import addon="plugin.video.youtube" version="6.7.0" optional="true"/>
+        <import addon="plugin.video.invidious" version="2.1.1" optional="true"/>
     </requires>
 
     <extension point="xbmc.service" library="service.py"/>
@@ -12,7 +13,7 @@
         <menu id="kodi.core.main">
             <item library="context.py">
                 <label>32027</label>
-                <visible>String.IsEqual(ListItem.Property(Addon.ID),plugin.video.youtube)</visible>
+                <visible>String.IsEqual(ListItem.Property(Addon.ID),plugin.video.youtube) | String.IsEqual(ListItem.Property(Addon.ID),plugin.video.invidious)</visible>
             </item>
         </menu>
     </extension>
@@ -20,7 +21,7 @@
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Skip YouTube in-video sponsors</summary>
         <description lang="en_GB">
-SponsorBlock browser extension ported to Kodi's YouTube plugin.
+SponsorBlock browser extension ported to Kodi's YouTube and Invidious plugins.
 
 SponsorBlock is a crowdsourced project to skip sponsor segments in YouTube videos.
 Users submit when a sponsor happens and the add-on automatically skips sponsors it knows about.
@@ -31,6 +32,7 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
 - Add option to reduce all skips by some time (#30)
 - Ignore segments that do not fit into reduce skips setting (#31)
 - Reset existing playback when new video starts playing (#32)
+- Support for Kodi's Invidious plugin
         </news>
 
         <summary lang="de">Überspringe Sponsoren, betteln um Abonnenten und mehr in YouTube Videos</summary>

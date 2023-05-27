@@ -84,7 +84,7 @@ class Monitor(xbmc.Monitor):
         self._player_listener.preload_segments(video_id)
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
-        if sender != youtube_api.ADDON_ID:
+        if sender not in youtube_api.ADDON_IDS:
             return
 
         try:
