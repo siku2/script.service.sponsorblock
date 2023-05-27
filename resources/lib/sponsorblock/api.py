@@ -108,7 +108,6 @@ class SponsorBlockAPI:
         Returns:
             List of segments for the video, or an empty list if no segments were found.
         """
-        video_id = video_id[0]
         m = hashlib.sha256()
         m.update(video_id.encode())
         m.digest()
