@@ -24,7 +24,6 @@ function create_tempdir() {
   work_dir=$(mktemp --directory)
   if [[ ! "$work_dir" || ! -d "$work_dir" ]]; then
     exit_with_error "could not create temp dir"
-    exit 1
   fi
 
   echo "$work_dir"
