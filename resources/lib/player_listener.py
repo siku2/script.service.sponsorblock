@@ -171,14 +171,9 @@ class PlayerListener(PlayerCheckpointListener):
             return False
 
         chained_end = self.__get_segment_end_handle_overlap(seg)
-        min_skip_position = current_time + reduce_skips_seconds
 
-        if chained_end < min_skip_position:
-            logger.debug("skipping segment %s because there is not enough margin for 'Reduce all skips by this much' setting (%g)", seg, reduce_skips_seconds)
-            return False
-
-        if chained_end - seg.start < reduce_skips_seconds:
-            logger.debug("skipping segment %s because it is shorter than 'Reduce all skips by this much' setting (%g)", seg, reduce_skips_seconds)
+        if chained_end - seg.start <= reduce_skips_seconds:
+            logger.debug("not applying segment %s because it is shorter than 'Reduce all skips by this much' setting (%g seconds)", seg, reduce_skips_seconds)
             return False
 
         return True
