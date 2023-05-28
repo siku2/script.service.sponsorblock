@@ -11,6 +11,7 @@ from .utils.checkpoint_listener import PlayerCheckpointListener
 from .utils.const import (
     CONF_AUTO_UPVOTE,
     CONF_SEGMENT_CHAIN_MARGIN_MS,
+    CONF_MINIMUM_DURATION_MS,
     CONF_REDUCE_SKIPS_MS,
     CONF_SHOW_SKIPPED_DIALOG,
     CONF_SKIP_COUNT_TRACKING,
@@ -172,9 +173,18 @@ class PlayerListener(PlayerCheckpointListener):
             # this means the user manually went back into the segment.
             return False
 
-        chained_end = self.__get_segment_end_handle_overlap(seg)
+        minimum_duration_seconds = (
+            addon.get_config(CONF_MINIMUM_DURATION_MS, int) / 1000.0
+        )
 
-        if chained_end - seg.start <= reduce_skips_seconds:
+        chained_end = self.__get_segment_end_handle_overlap(seg)
+        segment_duration = chained_end - seg.start
+
+        if segment_duration < minimum_duration_seconds:
+            logger.debug("not applying segment %s because it is shorter than 'Minimum duration' setting (%g seconds)", seg, minimum_duration_seconds)
+            return False
+
+        if segment_duration <= reduce_skips_seconds:
             logger.debug("not applying segment %s because it is shorter than 'Reduce all skips by this much' setting (%g seconds)", seg, reduce_skips_seconds)
             return False
 

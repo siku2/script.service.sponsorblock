@@ -32,7 +32,8 @@ Users submit when a sponsor happens and the add-on automatically skips sponsors 
 - Add option to reduce all skips by some time (#30)
 - Ignore segments that do not fit into reduce skips setting (#31)
 - Reset existing playback when new video starts playing (#32)
-- Support for Kodi's Invidious plugin
+- Support for Kodi's Invidious plugin (#45)
+- Add option to only skip if longer than minimum duration
         </news>
 
         <summary lang="de">Überspringe Sponsoren, betteln um Abonnenten und mehr in YouTube Videos</summary>

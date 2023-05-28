@@ -71,6 +71,13 @@ msgctxt "#32041"
 msgid "Sometimes player may skip too much and cut off the content after sponsor. Use this option to end skips sooner than they should. This may cause tail end of the sponsor to still play, but you will not miss any actual content."
 msgstr ""
 
+msgctxt "#32042"
+msgid "Minimum duration (ms)"
+msgstr ""
+
+msgctxt "#32043"
+msgid "Segments shorter than the set value will not be applied."
+msgstr ""
 
 msgctxt "#32007"
 msgid "API"
