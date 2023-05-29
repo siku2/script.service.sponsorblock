@@ -1,6 +1,5 @@
 import logging
 import threading
-import time
 
 import xbmc
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 MAX_UNDERSHOOT = 0.25
 """Amount of tolerance in seconds for waking up early.
 
-If the listener wakes up and the difference to the checkpoint is bigger than this value, 
+If the listener wakes up and the difference to the checkpoint is bigger than this value,
 it goes back to sleep for the remaining time.
 """
 
@@ -21,7 +20,7 @@ MAX_OVERSHOOT = 1.5
 MAX_SEEK_AGE = 3
 """Amount of time in seconds after a seek before the seek time expires.
 
-In other words, this is the time after which the Kodi player should start reporting accurate values for 
+In other words, this is the time after which the Kodi player should start reporting accurate values for
 `Player.getTime()` again.
 """
 
@@ -178,7 +177,7 @@ class PlayerCheckpointListener(xbmc.Player):
         logger.debug("listener stopped")
 
     def onPlayBackSeek(self, target, offset):  # type: (int, int) -> None
-        # "target" variable in this method is not reliable. It represents the target that kodi wants to seek to, 
+        # "target" variable in this method is not reliable. It represents the target that kodi wants to seek to,
         # but actual seek time can be several seconds behind or late due to keyframes
         # instead of using this time, wait some time and then use getTime() to get accurate post-seek position
 

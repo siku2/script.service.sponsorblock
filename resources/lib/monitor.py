@@ -1,8 +1,9 @@
 import logging
-
 import xbmc
 
-from . import youtube_api
+from .apis.api_factory import get_api
+from .apis.models import NotificationPayload
+
 from .player_listener import PlayerListener
 from .sponsorblock import SponsorBlockAPI
 from .sponsorblock.utils import new_user_id
@@ -14,6 +15,7 @@ from .utils.const import (
     CONF_IGNORE_UNLISTED,
     CONF_USER_ID,
 )
+
 
 logger = logging.getLogger(__name__)
 
@@ -67,15 +69,14 @@ class Monitor(xbmc.Monitor):
         api.set_api_server(addon.get_config(CONF_API_SERVER, str))
         api.set_categories(get_categories())
 
-    def __handle_playback_init(self, data):
+    def __handle_playback_init(self, data): # type: (NotificationPayload) -> None
         try:
-            video_id = data["video_id"]
+            video_id = data.video_id
         except KeyError:
             logger.warning("received playbackinit notification without video id")
             return
 
-        unlisted = data.get("unlisted", False)
-        if unlisted and addon.get_config(CONF_IGNORE_UNLISTED, bool):
+        if data.unlisted and addon.get_config(CONF_IGNORE_UNLISTED, bool):
             logger.info("ignoring video %s because it's unlisted", video_id)
             self._player_listener.ignore_next_video(video_id)
             return
@@ -84,17 +85,23 @@ class Monitor(xbmc.Monitor):
         self._player_listener.preload_segments(video_id)
 
     def onNotification(self, sender, method, data):  # type: (str, str, str) -> None
-        if sender not in youtube_api.ADDON_IDS:
+        api = get_api(sender)
+
+        if not api:
             return
 
         try:
-            data = youtube_api.parse_notification_payload(data)
+            data = api.parse_notification_payload(data)
+
+            if not data:
+                return
         except Exception:
             logger.exception(
                 "failed to parse notification payload (%s): %r", method, data
             )
             return
 
-        logger.debug("notification from YouTube addon: %r %s", method, data)
-        if method == youtube_api.NOTIFICATION_PLAYBACK_INIT:
+        logger.debug("notification from %s: %r %s", sender, method, data)
+
+        if api.should_preload_segments(method, data):
             self.__handle_playback_init(data)
