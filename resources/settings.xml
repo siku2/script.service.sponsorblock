@@ -126,6 +126,13 @@
                     </control>
                 </setting>
             </group>
+            <group id="3" label="">
+                <setting id="extra_privacy" type="boolean" label="32042" help="32043">
+                    <level>3</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
         </category>
     </section>
 </settings>

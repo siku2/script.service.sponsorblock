@@ -166,3 +166,11 @@ msgstr ""
 msgctxt "#32027"
 msgid "SponsorBlock Settings"
 msgstr ""
+
+msgctxt "#32042"
+msgid "Extra Privacy"
+msgstr ""
+
+msgctxt "#32043"
+msgid "Preserves privacy but uses more bandwidth. Instead of requesting segments for a single video, queries for a batch of videos to prevent the SponsorBlock server from tracking your watch history."
+msgstr ""

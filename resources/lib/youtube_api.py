@@ -155,7 +155,9 @@ DOMAIN_GOOGLEVIDEO = "googlevideo.com"
 def get_video_id():  # type: () -> Option[str]
     """Get the video id for the playing item.
 
-    Example path: `plugin://plugin.video.youtube/play/?video_id=SQCfOjhguO0`
+    Example paths:
+    * `plugin://plugin.video.youtube/play/?video_id=SQCfOjhguO0`
+    * `plugin://plugin.video.invidious/?action=video&videoId=SQCfOjhguO0`
 
     Returns:
         Video ID that is being played. `None` if the current item isn't a YouTube video.
@@ -175,7 +177,7 @@ def get_video_id():  # type: () -> Option[str]
     )
     if valid_url:
         query = urlparse.parse_qs(path_url.query)
-        return query.get(uri_filter["query"])
+        return query.get(uri_filter["query"])[0]
 
     # has_context denotes whether the current video seems to be a youtube video
     # being played outside of the YouTube add-on.

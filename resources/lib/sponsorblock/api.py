@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 
@@ -79,7 +80,7 @@ class SponsorBlockAPI:
 
     def get_skip_segments(
         self, video_id
-    ):  # type: (str, List[str]) -> List[SponsorSegment]
+    ):  # type: (str, bool) -> list[SponsorSegment]
         params = {
             "videoID": video_id,
             "categories": self._categories_param,
@@ -92,6 +93,41 @@ class SponsorBlockAPI:
             start, end = raw["segment"]
             seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
             segments.append(seg)
+
+        segments.sort(key=lambda seg: seg.start)
+        return segments
+
+    def get_skip_segments_hashed(self, video_id):   # type: (str) -> list[SponsorSegment]
+        """
+        Privacy preserving varient of /api/skipSegments.
+        This uses more bandwidth, but doesn't indicate to the server which video
+        specifically the client was watching.
+
+        See also: https://wiki.sponsor.ajay.app/w/API_Docs#GET_/api/skipSegments/:sha256HashPrefix
+
+        Returns:
+            List of segments for the video, or an empty list if no segments were found.
+        """
+        m = hashlib.sha256()
+        m.update(video_id.encode())
+        m.digest()
+        id_hash = m.hexdigest()[:4]
+
+        params = {
+            "categories": self._categories_param
+        }
+
+        data = self._request("GET", GET_SKIP_SEGMENTS + "/" + id_hash, params)
+        segments = []
+
+        for video in data:
+            if video_id == video["videoID"]:
+                for raw in video["segments"]:
+                    start, end = raw["segment"]
+                    seg = SponsorSegment(raw["UUID"], raw["category"], start, end)
+                    segments.append(seg)
+
+                break
 
         segments.sort(key=lambda seg: seg.start)
         return segments

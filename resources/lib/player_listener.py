@@ -15,6 +15,7 @@ from .utils.const import (
     CONF_SHOW_SKIPPED_DIALOG,
     CONF_SKIP_COUNT_TRACKING,
     CONF_VIDEO_END_TIME_MARGIN_MS,
+    CONF_EXTRA_PRIVACY,
 )
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,8 @@ def get_sponsor_segments(
     api, video_id
 ):  # type: (SponsorBlockAPI, str) -> Optional[list[SponsorSegment]]
     try:
-        segments = api.get_skip_segments(video_id)
+        extra_privacy = addon.get_config(CONF_EXTRA_PRIVACY, bool)
+        segments = api.get_skip_segments_hashed(video_id) if extra_privacy else api.get_skip_segments(video_id)
     except NotFound:
         logger.info("video %s has no sponsor segments", video_id)
         return None
