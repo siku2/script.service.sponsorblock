@@ -3,10 +3,11 @@ import threading
 
 import xbmc
 
-from . import youtube_api
 from .gui.sponsor_skipped import SponsorSkipped
 from .sponsorblock import NotFound, SponsorBlockAPI, SponsorSegment
 from .utils import addon
+from .apis.api_factory import get_api
+from .utils.xbmc import get_playing_addon
 from .utils.checkpoint_listener import PlayerCheckpointListener
 from .utils.const import (
     CONF_AUTO_UPVOTE,
@@ -40,7 +41,7 @@ def _sanity_check_segments(segments):  # type: (Iterable[SponsorSegment]) -> boo
 
 def get_sponsor_segments(
     api, video_id
-):  # type: (SponsorBlockAPI, str) -> Optional[list[SponsorSegment]]
+):  # type: (SponsorBlockAPI, str) -> list[SponsorSegment] | None
     try:
         extra_privacy = addon.get_config(CONF_EXTRA_PRIVACY, bool)
         segments = api.get_skip_segments_hashed(video_id) if extra_privacy else api.get_skip_segments(video_id)
@@ -126,7 +127,9 @@ class PlayerListener(PlayerCheckpointListener):
         self._segments_video_id = None
 
         with self._should_start_lock:
-            video_id = youtube_api.get_video_id()
+            addon_id = get_playing_addon()
+            video_id = get_api(addon_id).get_video_id()
+
             if not video_id:
                 return
 
