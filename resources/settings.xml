@@ -132,7 +132,7 @@
                 </setting>
             </group>
             <group id="3" label="">
-                <setting id="extra_privacy" type="boolean" label="32042" help="32043">
+                <setting id="extra_privacy" type="boolean" label="32044" help="32045">
                     <level>3</level>
                     <default>false</default>
                     <control type="toggle"/>
