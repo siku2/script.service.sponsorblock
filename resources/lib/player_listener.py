@@ -128,7 +128,12 @@ class PlayerListener(PlayerCheckpointListener):
 
         with self._should_start_lock:
             addon_id = get_playing_addon()
-            video_id = get_api(addon_id).get_video_id()
+            api = get_api(addon_id)
+
+            if not api:
+                return
+
+            video_id = api.get_video_id()
 
             if not video_id:
                 return
