@@ -2,6 +2,7 @@ import logging
 
 from .abstract_api import AbstractApi
 from .invidious_api import InvidiousApi
+from .piped_api import PipedApi
 from .youtube_api import YouTubeApi
 
 
@@ -10,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 API_MAP = {
     "plugin.video.youtube": YouTubeApi,
-    "plugin.video.invidious": InvidiousApi
+    "plugin.video.invidious": InvidiousApi,
+    "plugin.video.piped": PipedApi
 }
 
 
