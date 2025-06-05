@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 API_MAP = {
     "plugin.video.youtube": YouTubeApi,
+    "plugin.video.sendtokodi": YouTubeApi,
     "plugin.video.invidious": InvidiousApi,
     "plugin.video.piped": PipedApi
 }
