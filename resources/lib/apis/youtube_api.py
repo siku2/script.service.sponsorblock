@@ -35,8 +35,7 @@ unique ids that require context
 class YouTubeApi(AbstractApi):
 
     def parse_notification_payload(self, data):  # type: (str) -> NotificationPayload | None
-        args = json.loads(data)
-        parsed = json.loads(urlparse.unquote(args[0]))
+        parsed = json.loads(data)
         return NotificationPayload(parsed.get("video_id", None), parsed.get("unlisted", None))
 
     def get_video_id(self):  # type: () -> str | None
