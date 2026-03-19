@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=siku2&project=script.service.sponsorblock&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 # Kodi SponsorBlock
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/siku2/script.service.sponsorblock)](https://github.com/siku2/script.service.sponsorblock/releases/latest)
