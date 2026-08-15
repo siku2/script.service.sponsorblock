@@ -4,7 +4,7 @@ import itertools
 import json
 import logging
 
-from six.moves.urllib import parse as urlparse
+from urllib import parse as urlparse
 
 from .abstract_api import AbstractApi
 from .models import NotificationPayload
@@ -19,6 +19,8 @@ _logger = logging.getLogger(__name__)
 _IMAGE_SCHEME = "image://"
 DOMAIN_THUMBNAIL = "ytimg.com"
 DOMAIN_GOOGLEVIDEO = "googlevideo.com"
+DOMAIN_YOUTUBE = "youtube.com"
+DOMAIN_YOUTU_BE = "youtu.be"
 NOTIFICATION_PLAYBACK_INIT = "Other.PlaybackInit"
 
 
@@ -39,34 +41,66 @@ class YouTubeApi(AbstractApi):
         return NotificationPayload(parsed.get("video_id", None), parsed.get("unlisted", None))
 
     def get_video_id(self):  # type: () -> str | None
-        try:
-            path_url = urlparse.urlsplit(get_playing_file_path())
-            query = urlparse.parse_qs(path_url.query)
-        except Exception:
-            return None
+        video_id = video_id_from_url(get_playing_file_path())
+        if video_id:
+            return video_id
 
-        valid_url = (
-            path_url.scheme == "plugin"
-            and path_url.path.startswith("/play")
-        )
-
-        if valid_url:
-            return query.get("video_id")[0]
+        # Kodi may replace the original plugin URL with a resolved media URL by
+        # the time onPlayBackStarted fires. Player.GetItem can still retain the
+        # original URL, so check it before falling back to item metadata.
+        item = get_player_item()
+        video_id = video_id_from_url(item.get(jsonrpc.LIST_FIELD_FILE, ""))
+        if video_id:
+            return video_id
 
         # has_context denotes whether the current video seems to be a youtube video
         # being played outside of the YouTube add-on.
-        if path_url.hostname is None:
-            has_context = False
-        else:
-            has_context = path_url.hostname.endswith(DOMAIN_GOOGLEVIDEO)
         try:
-            return video_id_from_list_item(has_context)
+            hostname = urlparse.urlsplit(get_playing_file_path()).hostname
+        except (TypeError, ValueError):
+            hostname = None
+        has_context = bool(hostname and hostname.endswith(DOMAIN_GOOGLEVIDEO))
+        try:
+            return video_id_from_list_item(has_context, item=item)
         except Exception:
             _logger.exception("failed to get video id from list item")
             return None
 
     def should_preload_segments(self, method, data): # type: (str, NotificationPayload) -> bool
         return method == NOTIFICATION_PLAYBACK_INIT
+
+
+def video_id_from_url(value):
+    """Extract a YouTube ID from current and legacy playback URLs."""
+    if not value:
+        return None
+
+    try:
+        parsed = urlparse.urlsplit(value)
+        query = urlparse.parse_qs(parsed.query)
+    except (TypeError, ValueError):
+        return None
+
+    if parsed.scheme == "plugin" and parsed.netloc in (
+        "plugin.video.youtube",
+        "plugin.video.sendtokodi",
+    ):
+        video_id = query.get("video_id", query.get("videoid", [None]))[0]
+        if video_id:
+            return video_id
+
+        parts = [part for part in parsed.path.split("/") if part]
+        if len(parts) >= 2 and parts[-2] in ("play", "watch"):
+            return parts[-1]
+
+    hostname = (parsed.hostname or "").lower()
+    if hostname == DOMAIN_YOUTU_BE or hostname.endswith("." + DOMAIN_YOUTU_BE):
+        return parsed.path.lstrip("/").split("/", 1)[0] or None
+    if hostname == DOMAIN_YOUTUBE or hostname.endswith("." + DOMAIN_YOUTUBE):
+        return query.get("v", [None])[0]
+
+    return None
+
 
 def _extract_image_url(img):  # type: (str) -> str
     if not img.startswith(_IMAGE_SCHEME):
@@ -116,21 +150,30 @@ def _video_id_from_ids(unique_ids, has_context):  # type: (dict, bool) -> str | 
             pass
 
 
-def video_id_from_list_item(has_context):  # type: (bool) -> str | None
+def get_player_item():
     try:
         result = jsonrpc.execute(
             "Player.GetItem",
             jsonrpc.PLAYER_VIDEO,
             [
                 jsonrpc.LIST_FIELD_ART,
+                jsonrpc.LIST_FIELD_FILE,
                 jsonrpc.LIST_FIELD_UNIQUEID,
             ],
         )
     except Exception:
         _logger.exception("failed to get item from JSON RPC")
-        return None
+        return {}
 
-    item = result["item"]  # type: dict
+    return result.get("item", {})
+
+
+def video_id_from_list_item(has_context, item=None):  # type: (bool, dict) -> str | None
+    if item is None:
+        item = get_player_item()
+
+    if not item:
+        return None
 
     # extract from unique ids
 

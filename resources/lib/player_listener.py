@@ -122,6 +122,7 @@ class PlayerListener(PlayerCheckpointListener):
 
     def onPlayBackStarted(self):  # type: () -> None
         # Reset existing playback
+        self.stop_listener()
         self._reset_next_checkpoint()
         self._segments = []
         self._segments_video_id = None

@@ -172,7 +172,10 @@ class PlayerCheckpointListener(xbmc.Player):
         self._trigger_wakeup()
 
         logger.debug("waiting for listener to join")
-        self._thread.join()
+        # Kodi player callbacks can occasionally run on the listener thread.
+        # Never attempt to join the current thread.
+        if self._thread is not threading.current_thread():
+            self._thread.join()
 
         logger.debug("listener stopped")
 

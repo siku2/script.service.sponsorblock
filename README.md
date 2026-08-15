@@ -8,7 +8,13 @@ It works as an extension to the [YouTube Plugin](https://github.com/anxdpanic/pl
 
 Once installed, the add-on will automatically skip sponsor segments in all YouTube and Invidious videos you watch.
 
-For a detailed explanation of how SponsorBlock works please visit the [offical website](https://sponsor.ajay.app/).
+## Compatibility
+
+This release supports Kodi 19 (Matrix) through Kodi 21 (Omega), including
+current 7.x releases of the YouTube add-on. Kodi 18 and older use Python 2 and
+are no longer supported.
+
+For a detailed explanation of how SponsorBlock works please visit the [official website](https://sponsor.ajay.app/).
 
 ## Installation
 
