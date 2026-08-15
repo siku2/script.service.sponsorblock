@@ -47,6 +47,7 @@ def get_categories():
 
 class Monitor(xbmc.Monitor):
     def __init__(self):
+        super(Monitor, self).__init__()
         self._api = SponsorBlockAPI(
             user_id=get_user_id(),
             api_server=addon.get_config(CONF_API_SERVER, str),
@@ -70,9 +71,8 @@ class Monitor(xbmc.Monitor):
         api.set_categories(get_categories())
 
     def __handle_playback_init(self, data): # type: (NotificationPayload) -> None
-        try:
-            video_id = data.video_id
-        except KeyError:
+        video_id = data.video_id
+        if not video_id:
             logger.warning("received playbackinit notification without video id")
             return
 

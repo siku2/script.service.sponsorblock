@@ -1,6 +1,6 @@
 import json
 
-from six.moves.urllib import parse as urlparse
+from urllib import parse as urlparse
 
 from .abstract_api import AbstractApi
 from .models import NotificationPayload
@@ -29,10 +29,10 @@ class InvidiousApi(AbstractApi):
         valid_url = (
             path_url.scheme == "plugin"
             and path_url.path.startswith("/")
-            and query.get("action")[0] == "video"
+            and query.get("action", [None])[0] == "video"
         )
 
-        return query.get("videoId")[0] if valid_url else None
+        return query.get("videoId", [None])[0] if valid_url else None
 
     def should_preload_segments(self, method, data): # type: (str, NotificationPayload) -> bool
         return data.video_id is not None

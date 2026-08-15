@@ -13,7 +13,7 @@
                     <default>false</default>
                     <control type="toggle"/>
                     <dependencies>
-                        <dependency type="enable" setting="show_skipped_dialog">true</dependency>>
+                        <dependency type="enable" setting="show_skipped_dialog">true</dependency>
                     </dependencies>
                 </setting>
                 <setting id="ignore_unlisted" type="boolean" label="32026" help="32031">

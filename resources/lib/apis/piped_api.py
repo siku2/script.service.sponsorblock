@@ -1,6 +1,6 @@
 import json
 
-from six.moves.urllib import parse as urlparse
+from urllib import parse as urlparse
 
 from .abstract_api import AbstractApi
 from .models import NotificationPayload
